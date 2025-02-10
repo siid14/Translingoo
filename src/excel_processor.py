@@ -112,26 +112,69 @@ class ExcelProcessor:
             return False
             
         try:
-            import argostranslate.package
-            import argostranslate.translate
+            # Technical terms translation dictionary (English to French)
+            translations = {
+                # English to French translations
+                'ABSENCE OF REFERENCE VOLTAGE': 'ABSENCE DE TENSION DE REFERENCE',
+                'ABSENCE OF VOLTAGE': 'ABSENCE DE TENSION',
+                'DEAD INCOMING DEAD RUNNING': 'MORT ENTRANT MORT COURANT',
+                'CLOSE PERMISSIVE': 'PERMISSIF DE FERMETURE',
+                'BAY L/R MODE': 'MODE L/R TRAVEE',
+                'ON/OFF SECONDARY SPS': 'MARCHE/ARRET SPS SECONDAIRE',
+                'ON/OFF MAIN FOR CB1': 'MARCHE/ARRET PRINCIPAL POUR CB1',
+                'DUMMY': 'FACTICE',
+                'COMP. POSITION': 'POSITION COMP.',
+                'COMP_POSITION': 'POSITION_COMP',
+                'DISCONNECTOR G1 POSITION': 'POSITION SECTIONNEUR G1',
+                'DISCONNECTOR G2 POSITION': 'POSITION SECTIONNEUR G2',
+                'DISCONNECTOR G3 POSITION': 'POSITION SECTIONNEUR G3',
+                'EARTH SWITCH DES1 POSITION': 'SECTIONNEUR TERRE DES1 POSITION',
+                'EARTH SWITCH DES2 POSITION': 'SECTIONNEUR TERRE DES2 POSITION',
+                'EARTH SWITCH DES3 POSITION': 'SECTIONNEUR TERRE DES3 POSITION',
+                'EARTH SWITCH FES1 POSITION': 'SECTIONNEUR TERRE FES1 POSITION',
+                'MANUAL CONTROL CIRCUIT BREAKER CB1': 'COMMANDE MANUELLE DISJONCTEUR CB1',
+                'TRIP CIRCUIT FAULT': 'DEFAUT CIRCUITDE DECLENCHEMENT',
+                'UNLOCKING RELAY SUPERVISION': 'SUPERVISION RELAIS DEVERROUILLAGE',
+                'INTERLOCK PERMISSIVE': 'PERMISSIF VERROUILLAGE',
+                'I/L PERMISSIVE': 'PERMISSIF V/F',
+                'CLOSE I/L PERMISSIVE': 'PERMISSIF V/F FERMETURE',
+                'OPEN I/L PERMISSIVE': 'PERMISSIF V/F OUVERTURE',
+                'CIRCUIT BREAKER GCB1 POSITION': 'DISJONCTEUR GCB1 POSITION',
+                'CIRCUIT BREAKER-GCB1 POS': 'DISJONCTEUR-GCB1 POS'
+            }
             
-            print("\nDEBUG: Initializing Argos Translate")
+            # Create reverse dictionary for French to English lookups
+            reverse_translations = {v: k for k, v in translations.items()}
             
-            # Create a translation function that handles None/NaN values
+            print("\nDEBUG: Starting translation of Description column")
+            
+            def is_french(text):
+                """Check if text contains French-specific words/patterns"""
+                french_indicators = ['DE', 'DES', 'PERMISSIF', 'SECTIONNEUR', 'TERRE', 'DISJONCTEUR', 'MARCHE', 'ARRET']
+                return any(indicator in text.upper() for indicator in french_indicators)
+            
             def translate_text(text):
                 if pd.isna(text) or text is None or str(text).strip() == '':
                     return text
-                try:
-                    # Get translation from French to English
-                    translated = argostranslate.translate.translate(str(text), "fr", "en")
+                    
+                text_str = str(text).strip().upper()
+                
+                # If text is in French, skip it
+                if is_french(text_str):
+                    print(f"DEBUG: Skipping French text: '{text}'")
+                    return text
+                    
+                # Try to translate English to French
+                if text_str in translations:
+                    translated = translations[text_str]
                     print(f"DEBUG: Translated '{text}' → '{translated}'")
                     return translated
-                except Exception as e:
-                    print(f"DEBUG: Translation failed for '{text}': {str(e)}")
-                    return text
+                    
+                # If no translation found, return original
+                print(f"DEBUG: No translation found for '{text}', keeping original")
+                return text
             
-            # Apply translation to Description column
-            print("\nDEBUG: Starting translation of Description column")
+            # Apply translation
             self.output_df['Description'] = self.output_df['Description'].apply(translate_text)
             print("DEBUG: Translation completed")
             
