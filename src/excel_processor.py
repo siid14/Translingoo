@@ -111,12 +111,42 @@ class ExcelProcessor:
             print(f"DEBUG: Available columns: {self.output_df.columns.tolist()}")
             return False
             
-        # Limit to 1000 rows if necessary
-        if len(self.output_df) > 1000:
-            self.output_df = self.output_df.head(1000)
-            print("DEBUG: Truncated to 1000 rows")
+        try:
+            import argostranslate.package
+            import argostranslate.translate
             
-        return True
+            print("\nDEBUG: Initializing Argos Translate")
+            
+            # Create a translation function that handles None/NaN values
+            def translate_text(text):
+                if pd.isna(text) or text is None or str(text).strip() == '':
+                    return text
+                try:
+                    # Get translation from French to English
+                    translated = argostranslate.translate.translate(str(text), "fr", "en")
+                    print(f"DEBUG: Translated '{text}' → '{translated}'")
+                    return translated
+                except Exception as e:
+                    print(f"DEBUG: Translation failed for '{text}': {str(e)}")
+                    return text
+            
+            # Apply translation to Description column
+            print("\nDEBUG: Starting translation of Description column")
+            self.output_df['Description'] = self.output_df['Description'].apply(translate_text)
+            print("DEBUG: Translation completed")
+            
+            # Limit to 1000 rows if necessary
+            if len(self.output_df) > 1000:
+                self.output_df = self.output_df.head(1000)
+                print("DEBUG: Truncated to 1000 rows")
+            
+            return True
+            
+        except Exception as e:
+            print(f"\nDEBUG: Error during translation:")
+            print(f"- Error type: {type(e).__name__}")
+            print(f"- Error message: {str(e)}")
+            return False
 
     def save_excel(self, output_path):
         """Save the processed DataFrame to a new Excel file."""
