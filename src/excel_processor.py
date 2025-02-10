@@ -117,8 +117,11 @@ class ExcelProcessor:
                 # English to French translations
                 'ABSENCE OF REFERENCE VOLTAGE': 'ABSENCE DE TENSION DE REFERENCE',
                 'ABSENCE OF VOLTAGE': 'ABSENCE DE TENSION',
-                'DEAD INCOMING DEAD RUNNING': 'MORT ENTRANT MORT COURANT',
+                'DEAD INCOMING DEAD RUNNING': 'ENTREE INACTIVE EXECUTION INACTIVE',
                 'CLOSE PERMISSIVE': 'PERMISSIF DE FERMETURE',
+                'UNLOCKING RELAY SUPERVISION 86A': 'SUPERVISION RELAIS DEVERROUILLAGE 86A',
+                'UNLOCKING RELAY SUPERVISION 86B': 'SUPERVISION RELAIS DEVERROUILLAGE 86B',
+                'PERMISSIF DE FERMETURE': 'CLOSE PERMISSIVE',
                 'BAY L/R MODE': 'MODE L/R TRAVEE',
                 'ON/OFF SECONDARY SPS': 'MARCHE/ARRET SPS SECONDAIRE',
                 'ON/OFF MAIN FOR CB1': 'MARCHE/ARRET PRINCIPAL POUR CB1',
@@ -133,7 +136,7 @@ class ExcelProcessor:
                 'EARTH SWITCH DES3 POSITION': 'SECTIONNEUR TERRE DES3 POSITION',
                 'EARTH SWITCH FES1 POSITION': 'SECTIONNEUR TERRE FES1 POSITION',
                 'MANUAL CONTROL CIRCUIT BREAKER CB1': 'COMMANDE MANUELLE DISJONCTEUR CB1',
-                'TRIP CIRCUIT FAULT': 'DEFAUT CIRCUITDE DECLENCHEMENT',
+                'TRIP CIRCUIT FAULT': 'DEFAUT CIRCUIT DE DECLENCHEMENT',
                 'UNLOCKING RELAY SUPERVISION': 'SUPERVISION RELAIS DEVERROUILLAGE',
                 'INTERLOCK PERMISSIVE': 'PERMISSIF VERROUILLAGE',
                 'I/L PERMISSIVE': 'PERMISSIF V/F',
@@ -150,7 +153,10 @@ class ExcelProcessor:
             
             def is_french(text):
                 """Check if text contains French-specific words/patterns"""
-                french_indicators = ['DE', 'DES', 'PERMISSIF', 'SECTIONNEUR', 'TERRE', 'DISJONCTEUR', 'MARCHE', 'ARRET']
+                french_indicators = [
+                    'DE', 'DES', 'PERMISSIF', 'SECTIONNEUR', 'TERRE', 'DISJONCTEUR', 
+                    'MARCHE', 'ARRET', 'ENTREE', 'INACTIVE', 'EXECUTION'
+                ]
                 return any(indicator in text.upper() for indicator in french_indicators)
             
             def translate_text(text):
@@ -159,17 +165,21 @@ class ExcelProcessor:
                     
                 text_str = str(text).strip().upper()
                 
-                # If text is in French, skip it
-                if is_french(text_str):
-                    print(f"DEBUG: Skipping French text: '{text}'")
-                    return text
-                    
-                # Try to translate English to French
+                # First check if we have a direct translation from English to French
                 if text_str in translations:
                     translated = translations[text_str]
                     print(f"DEBUG: Translated '{text}' → '{translated}'")
                     return translated
-                    
+                
+                # If text is in French, try to translate to English
+                if is_french(text_str):
+                    if text_str in reverse_translations:
+                        translated = reverse_translations[text_str]
+                        print(f"DEBUG: Translated '{text}' → '{translated}'")
+                        return translated
+                    print(f"DEBUG: No English translation found for French text: '{text}'")
+                    return text
+                
                 # If no translation found, return original
                 print(f"DEBUG: No translation found for '{text}', keeping original")
                 return text
