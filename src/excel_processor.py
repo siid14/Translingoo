@@ -12,63 +12,80 @@ class ExcelProcessor:
             print(f"\nDEBUG: Attempting to load file: {file_path}")
             print(f"DEBUG: File exists: {Path(file_path).exists()}")
             
-            # Try multiple approaches
-            approaches = [
-                # Approach 1: Basic read with no parameters
-                lambda: pd.read_excel(file_path),
-                
-                # Approach 2: Read with openpyxl and different parameters
-                lambda: pd.read_excel(file_path, engine='openpyxl', sheet_name=None),
-                
-                # Approach 3: Try reading with a specific sheet name
-                lambda: pd.read_excel(file_path, sheet_name='Sheet1'),
-                
-                # Approach 4: Try reading with no header
-                lambda: pd.read_excel(file_path, header=None),
-                
-                # Approach 5: Try reading with different header position
-                lambda: pd.read_excel(file_path, header=13),
-            ]
+            import zipfile
+            import xml.etree.ElementTree as ET
             
-            last_error = None
-            for i, approach in enumerate(approaches, 1):
-                try:
-                    print(f"\nDEBUG: Trying approach {i}")
-                    result = approach()
+            with zipfile.ZipFile(file_path) as zf:
+                # Define namespaces
+                namespaces = {
+                    'main': 'http://purl.oclc.org/ooxml/spreadsheetml/main',
+                    'r': 'http://purl.oclc.org/ooxml/officeDocument/relationships'
+                }
+                
+                # Read shared strings if they exist
+                shared_strings = []
+                if 'xl/sharedStrings.xml' in zf.namelist():
+                    with zf.open('xl/sharedStrings.xml') as f:
+                        strings_tree = ET.parse(f)
+                        strings_root = strings_tree.getroot()
+                        for si in strings_root.findall('.//{%s}t' % namespaces['main']):
+                            shared_strings.append(si.text)
+                    print(f"DEBUG: Loaded {len(shared_strings)} shared strings")
+                
+                # Read the worksheet
+                print("\nDEBUG: Reading sheet1.xml directly")
+                with zf.open('xl/worksheets/sheet1.xml') as f:
+                    sheet_tree = ET.parse(f)
+                    sheet_root = sheet_tree.getroot()
                     
-                    # If result is a dict (multiple sheets), take the first sheet
-                    if isinstance(result, dict):
-                        if result:
-                            self.input_df = next(iter(result.values()))
-                            print(f"DEBUG: Successfully read first sheet from dictionary")
-                        else:
-                            raise ValueError("No sheets found in the workbook")
-                    else:
-                        self.input_df = result
+                    # Get all rows
+                    rows = sheet_root.findall('.//{%s}row' % namespaces['main'])
+                    print(f"Found {len(rows)} rows")
                     
-                    print("DEBUG: Successfully read the file!")
+                    # Process rows into data
+                    data = []
+                    for row in rows:
+                        row_data = []
+                        cells = row.findall('{%s}c' % namespaces['main'])
+                        
+                        for cell in cells:
+                            # Get cell value
+                            v = cell.find('{%s}v' % namespaces['main'])
+                            t = cell.get('t')  # cell type
+                            
+                            if v is not None:
+                                value = v.text
+                                # If cell type is 's', it's a shared string
+                                if t == 's' and shared_strings:
+                                    try:
+                                        value = shared_strings[int(value)]
+                                    except (ValueError, IndexError):
+                                        pass
+                                row_data.append(value)
+                            else:
+                                row_data.append(None)
+                        
+                        data.append(row_data)
+                        
+                        # Print first few rows for debugging
+                        if len(data) <= 5:
+                            print(f"Row {len(data)}: {row_data}")
+                    
+                    # Create DataFrame
+                    self.input_df = pd.DataFrame(data[13:])  # Skip first 13 rows as before
+                    
+                    # Set column names based on the first row
+                    self.input_df.columns = self.input_df.iloc[0]
+                    self.input_df = self.input_df[1:]  # Remove the header row
+                    
+                    print("\nDEBUG: Successfully created DataFrame")
                     print("\nDEBUG: File Content Preview:")
                     print(self.input_df.head())
                     print(f"\nDEBUG: DataFrame shape: {self.input_df.shape}")
                     print(f"DEBUG: Columns: {self.input_df.columns.tolist()}")
-                    return True
                     
-                except Exception as e:
-                    print(f"DEBUG: Approach {i} failed: {str(e)}")
-                    last_error = e
-                    continue
-            
-            # If we get here, all approaches failed
-            print("\nDEBUG: All approaches failed to read the file")
-            print(f"Last error: {str(last_error)}")
-            
-            # One final attempt - try to read raw bytes to see if file is corrupted
-            with open(file_path, 'rb') as f:
-                header = f.read(8)  # Read first 8 bytes
-                print(f"\nDEBUG: File header bytes: {header.hex()}")
-            
-            return False
-            
+                    return True
+                
         except Exception as e:
             print(f"\nDEBUG: Error details:")
             print(f"- Error type: {type(e).__name__}")
