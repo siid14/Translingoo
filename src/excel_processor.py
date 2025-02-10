@@ -114,13 +114,23 @@ class ExcelProcessor:
         try:
             # Technical terms translation dictionary (English to French)
             translations = {
-                # English to French translations
+                # Existing translations
                 'ABSENCE OF REFERENCE VOLTAGE': 'ABSENCE DE TENSION DE REFERENCE',
                 'ABSENCE OF VOLTAGE': 'ABSENCE DE TENSION',
-                'DEAD INCOMING DEAD RUNNING': 'ENTREE INACTIVE EXECUTION INACTIVE',
+                'DEAD INCOMING  DEAD RUNNING': 'ENTREE INACTIVE EXECUTION INACTIVE',
                 'CLOSE PERMISSIVE': 'PERMISSIF DE FERMETURE',
                 'UNLOCKING RELAY SUPERVISION 86A': 'SUPERVISION RELAIS DEVERROUILLAGE 86A',
                 'UNLOCKING RELAY SUPERVISION 86B': 'SUPERVISION RELAIS DEVERROUILLAGE 86B',
+                
+                # New translations
+                'PRESENCE OF REFERENCE VOLTAGE': 'PRÉSENCE DE TENSION DE RÉFÉRENCE',
+                'PRASENCE OF VOLTAGE': 'PRÉSENCE DE TENSION',
+                'LIVE INCOMING  DEAD RUNNING': 'ENTRÉE SOUS TENSION, FONCTIONNEMENT SOUS TENSION',
+                'POSSIBLE CLOSING': 'FERMETURE POSSIBLE',
+                'BUS-1 SELECT': 'SÉLECTION DU BUS-1',
+                'IINTERLOCK PERMISSIVE': 'AUTORISATION D\'INTERVERROUILLAGE',
+                
+                # Rest of existing translations
                 'PERMISSIF DE FERMETURE': 'CLOSE PERMISSIVE',
                 'BAY L/R MODE': 'MODE L/R TRAVEE',
                 'ON/OFF SECONDARY SPS': 'MARCHE/ARRET SPS SECONDAIRE',
