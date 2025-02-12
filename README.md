@@ -41,8 +41,13 @@ Translingoo is a Python-based utility that processes Excel files containing indu
      source venv/bin/activate
      ```
    - On Windows:
+
      ```sh
      python -m venv venv
+
+     or
+
+     python3 -m venv venv
      venv\Scripts\activate
      ```
 
@@ -57,9 +62,15 @@ Translingoo is a Python-based utility that processes Excel files containing indu
 
 1. Place your Excel file in an accessible location.
 2. Run the program:
+
    ```sh
    python src/main.py
+
+   or
+
+   python3 src/main.py
    ```
+
 3. Follow the prompts to select your input file.
 4. The translated file will be saved with a "\_translated" suffix.
 
