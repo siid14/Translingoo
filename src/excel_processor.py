@@ -226,6 +226,9 @@ class ExcelProcessor:
                 
                 # Overcurrent protection translations
                 '50/51 STAGE-1 A-PH': 'ÉTAPE-1 50/51 PHASE-A',
+                '50/51 STAGE-1 B-PH': 'ÉTAPE-1 50/51 PHASE-B',  # Protection à maximum de courant phase B
+                '50/51 STAGE-1 C-PH': 'ÉTAPE-1 50/51 PHASE-C',  # Protection à maximum de courant phase C
+                '24 STAGE-1': 'ÉTAPE-1 24',  # Protection de surexcitation V/Hz
             }
             
             print("\nDEBUG: Starting translation of Description column")
