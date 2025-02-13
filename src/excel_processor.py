@@ -223,6 +223,8 @@ class ExcelProcessor:
                 # High voltage earth fault protection translations
                 'HV 50N/51N STAGE-1 START': 'DÉMARRAGE ÉTAPE-1 50N/51N HT',
                 'HV 50N/51N STAGE-1': 'ÉTAPE-1 50N/51N HT',
+                'HV 50N/51N STAGE-2 START': 'DÉMARRAGE ÉTAPE-2 50N/51N HT',  # Protection à maximum de courant terre haute tension
+                'HV 50N/51N STAGE-2': 'ÉTAPE-2 50N/51N HT',
                 
                 # Overcurrent protection translations
                 '50/51 STAGE-1 A-PH': 'ÉTAPE-1 50/51 PHASE-A',
