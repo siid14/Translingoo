@@ -247,6 +247,9 @@ class ExcelProcessor:
                 '+6R3 EFS B3 OPERATIONAL': '+6R3 EFS B3 EN SERVICE',
                 '+6R1 EFS B1 OPERATIONAL': '+6R1 EFS B1 EN SERVICE',
                 '+6R3 EFS B4 OPERATIONAL': '+6R3 EFS B4 EN SERVICE',
+                'REGULATOR R/L': 'RÉGULATEUR D/G',
+                'MOTOR MCB FAIL': 'DÉFAUT DISJONCTEUR MOTEUR',
+                'TAP CHANGER IN SERVICE': 'CHANGEUR DE PRISES EN SERVICE',
             }
             
             print("\nDEBUG: Starting translation of Description column")
