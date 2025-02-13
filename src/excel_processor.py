@@ -231,6 +231,16 @@ class ExcelProcessor:
                 '50/51 STAGE-1 B-PH': 'ÉTAPE-1 50/51 PHASE-B',  # Protection à maximum de courant phase B
                 '50/51 STAGE-1 C-PH': 'ÉTAPE-1 50/51 PHASE-C',  # Protection à maximum de courant phase C
                 '24 STAGE-1': 'ÉTAPE-1 24',  # Protection de surexcitation V/Hz
+
+                # Switchgear and operational status translations
+                '+SWG EFS B8 OPERATIONAL': '+TBT EFS B8 OPÉRATIONNEL',
+                '+6R3 EFS B2 OPERATIONAL': '+6R3 EFS B2 OPÉRATIONNEL',
+                '+6R3 EFS B5 OPERATIONAL': '+6R3 EFS B5 OPÉRATIONNEL',
+                '+SWG EFS B7 OPERATIONAL': '+TBT EFS B7 OPÉRATIONNEL',
+                
+                # DC circuit breaker translations
+                'DC MCB TRIP': 'DÉCLENCHEMENT DISJONCTEUR CC',
+                '6MET-DC MCB TRIP': 'DÉCLENCHEMENT DISJONCTEUR CC 6MET',
             }
             
             print("\nDEBUG: Starting translation of Description column")
