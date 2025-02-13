@@ -117,7 +117,11 @@ class ExcelProcessor:
                 # Existing translations
                 'ABSENCE OF REFERENCE VOLTAGE': 'ABSENCE DE TENSION DE REFERENCE',
                 'ABSENCE OF VOLTAGE': 'ABSENCE DE TENSION',
-                'DEAD INCOMING  DEAD RUNNING': 'ENTRÉE HORS TENSION, FONCTIONNEMENT HORS TENSION',
+                'DEAD INCOMING DEAD RUNNING': 'ENTRÉE HORS TENSION, FONCTIONNEMENT HORS TENSION',  # Fixed spacing
+                'DEAD INCOMING  DEAD RUNNING': 'ENTRÉE HORS TENSION, FONCTIONNEMENT HORS TENSION',  # Extra space variant
+                
+                'LIVE INCOMING LIVE RUNNING': 'ENTRÉE SOUS TENSION, FONCTIONNEMENT SOUS TENSION',   # Fixed spacing
+                'LIVE INCOMING  LIVE RUNNING': 'ENTRÉE SOUS TENSION, FONCTIONNEMENT SOUS TENSION',  # Extra space variant
                 'CLOSE PERMISSIVE': 'AUTORISATION DE FERMETURE',
                 
                 # New translations
@@ -126,6 +130,9 @@ class ExcelProcessor:
                 'LIVE INCOMING  DEAD RUNNING': 'ENTRÉE SOUS TENSION, FONCTIONNEMENT HORS TENSION',
                 'POSSIBLE CLOSING': 'FERMETURE AUTORISEE',
                 'BUS-1 SELECT': 'SÉLECTION DU BUS-1',
+                'BUS-2 DESELECT': 'DÉSÉLECTION DU BUS-2',  # New translation
+                'BAY L/R MODE': 'MODE L/R TRAVEE',  # Moving to top section for visibility
+                'BAY L/R  MODE': 'MODE L/R TRAVEE',  # Extra space variant
                 'IINTERLOCK PERMISSIVE': 'AUTORISATION DE VERROUILLAGE',
                 
                 # Additional new translations
@@ -176,7 +183,6 @@ class ExcelProcessor:
                 '87L PROTECTION A-PH': 'PROTECTION 87L PHASE-A',
                 
                 # Rest of existing translations
-                'BAY L/R MODE': 'MODE L/R TRAVEE',
                 'ON/OFF SECONDARY SPS': 'MARCHE/ARRET SPS SECONDAIRE',
                 'ON/OFF MAIN FOR CB1': 'MARCHE/ARRET PRINCIPAL POUR CB1',
                 'DUMMY': 'FACTICE/RESERVE',
@@ -186,7 +192,6 @@ class ExcelProcessor:
                 'DISCONNECTOR G2 POSITION': 'POSITION SECTIONNEUR G2',
                 'DISCONNECTOR G3 POSITION': 'POSITION SECTIONNEUR G3',
                 'TRIP CIRCUIT FAULT': 'DEFAUT CIRCUIT DE DECLENCHEMENT',
-                'INTERLOCK PERMISSIVE': 'AUTORISATION DE VERROUILLAGE',
                 'I/L PERMISSIVE': 'PERMISSIF V/F',
                 'CLOSE I/L PERMISSIVE': 'PERMISSIF V/F FERMETURE',
                 'OPEN I/L PERMISSIVE': 'PERMISSIF V/F OUVERTURE',
@@ -211,7 +216,8 @@ class ExcelProcessor:
                 if pd.isna(text) or text is None or str(text).strip() == '':
                     return text
                     
-                text_str = str(text).strip().upper()
+                # Normalize the text by removing extra spaces
+                text_str = ' '.join(str(text).strip().upper().split())
                 
                 # First check if the text is French
                 if is_french(text_str):
@@ -221,6 +227,13 @@ class ExcelProcessor:
                 # If not French, try to translate from English to French
                 if text_str in translations:
                     translated = translations[text_str]
+                    print(f"DEBUG: Translated '{text}' → '{translated}'")
+                    return translated
+                
+                # Try with original spacing if normalized version not found
+                original_upper = str(text).strip().upper()
+                if original_upper in translations:
+                    translated = translations[original_upper]
                     print(f"DEBUG: Translated '{text}' → '{translated}'")
                     return translated
                 
