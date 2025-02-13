@@ -241,6 +241,12 @@ class ExcelProcessor:
                 # DC circuit breaker translations
                 'DC MCB TRIP': 'DÉCLENCHEMENT DISJONCTEUR CC',
                 '6MET-DC MCB TRIP': 'DÉCLENCHEMENT DISJONCTEUR CC 6MET',
+
+                # New translations
+                'BAY MODE': 'MODE TRAVÉE',
+                '+6R3 EFS B3 OPERATIONAL': '+6R3 EFS B3 EN SERVICE',
+                '+6R1 EFS B1 OPERATIONAL': '+6R1 EFS B1 EN SERVICE',
+                '+6R3 EFS B4 OPERATIONAL': '+6R3 EFS B4 EN SERVICE',
             }
             
             print("\nDEBUG: Starting translation of Description column")
@@ -256,7 +262,7 @@ class ExcelProcessor:
                 ]
                 
                 english_indicators = [
-                    'OPERATING', 'MODE', 'HARMONIC', 'DETECTED', '2ND'
+                    'OPERATING', 'MODE', 'HARMONIC', 'DETECTED', '2ND', 'BAY'
                 ]
                 
                 words = text.upper().split()
