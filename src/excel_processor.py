@@ -144,6 +144,37 @@ class ExcelProcessor:
                 'RPH PROTECTION': 'PROTECTION RPH',  # Remote Phase Protection Haute
                 'YPH PROTECTION': 'PROTECTION YPH',  # Yard Phase Protection Haute
                 
+                # Overcurrent protection stages
+                '50/51 STAGE-1': 'ETAPE-1 50/51',  # Overcurrent protection stage 1
+                '50/51 STAGE-1 START': 'DEMARRAGE ETAPE-1 50/51',
+                '50/51 STAGE-2': 'ETAPE-2 50/51',
+                '50/51 STAGE-2 START': 'DEMARRAGE ETAPE-2 50/51',
+                
+                # Communication
+                'DT SEND CH-1': 'ENVOI CANAL-1 DT',
+                'DT SEND CH-2': 'ENVOI CANAL-2 DT',
+                
+                # Directional Protection
+                '67N STAGE-1': 'ETAPE-1 67N',
+                '67N STAGE-1 START': 'DEMARRAGE ETAPE-1 67N',
+                
+                # Zone Protection
+                '21 ZONE-1 PROTECTION': 'PROTECTION ZONE-1 21',
+                '21 ZONE-2 PROTECTION': 'PROTECTION ZONE-2 21',
+                '21 ZONE-3 PROTECTION': 'PROTECTION ZONE-3 21',
+                '21 ZONE-4 PROTECTION': 'PROTECTION ZONE-4 21',
+                '21 ZONE-1 PROTECTION START': 'DEMARRAGE PROTECTION ZONE-1 21',
+                '21 ZONE-2 PROTECTION START': 'DEMARRAGE PROTECTION ZONE-2 21',
+                '21 ZONE-3 PROTECTION START': 'DEMARRAGE PROTECTION ZONE-3 21',
+                '21 ZONE-4 PROTECTION START': 'DEMARRAGE PROTECTION ZONE-4 21',
+                '21 ZONE-1 YPH PROTECTION': 'PROTECTION YPH ZONE-1 21',
+                '21 ZONE-1 BPH PROTECTION': 'PROTECTION BPH ZONE-1 21',
+                
+                # Differential Protection
+                '87L PROTECTION': 'PROTECTION 87L',
+                '87L PROTECTION START': 'DEMARRAGE PROTECTION 87L',
+                '87L PROTECTION A-PH': 'PROTECTION 87L PHASE-A',
+                
                 # Rest of existing translations
                 'BAY L/R MODE': 'MODE L/R TRAVEE',
                 'ON/OFF SECONDARY SPS': 'MARCHE/ARRET SPS SECONDAIRE',
@@ -172,7 +203,7 @@ class ExcelProcessor:
                     'MARCHE', 'ARRET', 'ENTREE', 'INACTIVE', 'EXECUTION', 'COMMANDE',
                     'MANUELLE', 'PORTEUSE', 'ENTRANTE', 'SORTANTE', 'EQUIPEMENT',
                     'RELAIS', 'DEVERROUILLAGE', 'DEMARRAGE', 'ETAPE', 'ENVOI', 'CANAL',
-                    'PROTECTION'
+                    'PROTECTION', 'PHASE', 'ZONE'
                 ]
                 return any(indicator in text.upper() for indicator in french_indicators)
             
