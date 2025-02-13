@@ -213,7 +213,19 @@ class ExcelProcessor:
                 '2ND HARMONIC DETECTED': '2ÈME HARMONIQUE DÉTECTÉ',
                 '87T C-PH OPTD': '87T PHASE-C OPÉRÉE',  # Protection différentielle transformateur
                 'TIME SYNCHRONISATION': 'SYNCHRONISATION TEMPORELLE',
-                '24 STAGE-1 START': 'DÉMARRAGE ÉTAPE-1 24'
+                '24 STAGE-1 START': 'DÉMARRAGE ÉTAPE-1 24',
+
+                # New transformer differential protection translations
+                '87T A-PH OPTD': '87T PHASE-A OPÉRÉE',
+                '87T B-PH OPTD': '87T PHASE-B OPÉRÉE',
+                '87T OPTD': '87T OPÉRÉE',
+                
+                # High voltage earth fault protection translations
+                'HV 50N/51N STAGE-1 START': 'DÉMARRAGE ÉTAPE-1 50N/51N HT',
+                'HV 50N/51N STAGE-1': 'ÉTAPE-1 50N/51N HT',
+                
+                # Overcurrent protection translations
+                '50/51 STAGE-1 A-PH': 'ÉTAPE-1 50/51 PHASE-A',
             }
             
             print("\nDEBUG: Starting translation of Description column")
@@ -227,7 +239,21 @@ class ExcelProcessor:
                     'RELAIS', 'DEVERROUILLAGE', 'DEMARRAGE', 'ETAPE', 'ENVOI', 'CANAL',
                     'PROTECTION', 'PHASE', 'ZONE'
                 ]
-                return any(indicator in text.upper() for indicator in french_indicators)
+                
+                english_indicators = [
+                    'OPERATING', 'MODE', 'HARMONIC', 'DETECTED', '2ND'
+                ]
+                
+                words = text.upper().split()
+                
+                # If any word is explicitly English, return False
+                if any(word in english_indicators for word in words):
+                    return False
+                
+                french_word_count = sum(1 for word in words if any(indicator == word for indicator in french_indicators))
+                total_words = len(words)
+                
+                return (french_word_count / total_words) > 0.3 if total_words > 0 else False
             
             def translate_text(text):
                 if pd.isna(text) or text is None or str(text).strip() == '':
