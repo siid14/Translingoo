@@ -117,30 +117,45 @@ class ExcelProcessor:
                 # Existing translations
                 'ABSENCE OF REFERENCE VOLTAGE': 'ABSENCE DE TENSION DE REFERENCE',
                 'ABSENCE OF VOLTAGE': 'ABSENCE DE TENSION',
-                'DEAD INCOMING  DEAD RUNNING': 'ENTREE INACTIVE EXECUTION INACTIVE',
-                'CLOSE PERMISSIVE': 'PERMISSIF DE FERMETURE',
+                'DEAD INCOMING  DEAD RUNNING': 'ENTRÉE HORS TENSION, FONCTIONNEMENT HORS TENSION',
+                'CLOSE PERMISSIVE': 'AUTORISATION DE FERMETURE',
                 
                 # New translations
                 'PRESENCE OF REFERENCE VOLTAGE': 'PRÉSENCE DE TENSION DE RÉFÉRENCE',
                 'PRASENCE OF VOLTAGE': 'PRÉSENCE DE TENSION',
-                'LIVE INCOMING  DEAD RUNNING': 'ENTRÉE SOUS TENSION, FONCTIONNEMENT SOUS TENSION',
-                'POSSIBLE CLOSING': 'FERMETURE POSSIBLE',
+                'LIVE INCOMING  DEAD RUNNING': 'ENTRÉE SOUS TENSION, FONCTIONNEMENT HORS TENSION',
+                'POSSIBLE CLOSING': 'FERMETURE AUTORISEE',
                 'BUS-1 SELECT': 'SÉLECTION DU BUS-1',
-                'IINTERLOCK PERMISSIVE': 'AUTORISATION D\'INTERVERROUILLAGE',
+                'IINTERLOCK PERMISSIVE': 'AUTORISATION DE VERROUILLAGE',
+                
+                # Additional new translations
+                'CARRIER IN': 'PORTEUSE ENTRANTE',
+                'CARRIER OUT': 'PORTEUSE SORTANTE',
+                'EQUIPMENT BCU': 'EQUIPEMENT BCU',  # Bloc de Contrôle Unité
+                'COMMUNICATION': 'COMMUNICATION',
+                'UNLOCKING RELAY ACTIVATED': 'RELAIS DEVERROUILLAGE ACTIVE',
+                'PROTECTION': 'PROTECTION',
+                'STAGE START': 'DEMARRAGE ETAPE',
+                'STAGE': 'ETAPE',
+                'SEND CH-1': 'ENVOI CANAL 1',
+                'SEND CH-2': 'ENVOI CANAL 2',
+                'ZONE PROTECTION': 'PROTECTION DE ZONE',
+                'BPH PROTECTION': 'PROTECTION BPH',  # Bus Phase Protection Haute
+                'RPH PROTECTION': 'PROTECTION RPH',  # Remote Phase Protection Haute
+                'YPH PROTECTION': 'PROTECTION YPH',  # Yard Phase Protection Haute
                 
                 # Rest of existing translations
                 'BAY L/R MODE': 'MODE L/R TRAVEE',
                 'ON/OFF SECONDARY SPS': 'MARCHE/ARRET SPS SECONDAIRE',
                 'ON/OFF MAIN FOR CB1': 'MARCHE/ARRET PRINCIPAL POUR CB1',
-                'DUMMY': 'FACTICE',
+                'DUMMY': 'FACTICE/RESERVE',
                 'COMP. POSITION': 'POSITION COMP.',
                 'COMP_POSITION': 'POSITION_COMP',
                 'DISCONNECTOR G1 POSITION': 'POSITION SECTIONNEUR G1',
                 'DISCONNECTOR G2 POSITION': 'POSITION SECTIONNEUR G2',
                 'DISCONNECTOR G3 POSITION': 'POSITION SECTIONNEUR G3',
-                'MANUAL CONTROL CIRCUIT BREAKER CB1': 'COMMANDE MANUELLE DISJONCTEUR CB1',
                 'TRIP CIRCUIT FAULT': 'DEFAUT CIRCUIT DE DECLENCHEMENT',
-                'INTERLOCK PERMISSIVE': 'PERMISSIF VERROUILLAGE',
+                'INTERLOCK PERMISSIVE': 'AUTORISATION DE VERROUILLAGE',
                 'I/L PERMISSIVE': 'PERMISSIF V/F',
                 'CLOSE I/L PERMISSIVE': 'PERMISSIF V/F FERMETURE',
                 'OPEN I/L PERMISSIVE': 'PERMISSIF V/F OUVERTURE',
@@ -148,16 +163,16 @@ class ExcelProcessor:
                 'CIRCUIT BREAKER-GCB1 POS': 'DISJONCTEUR-GCB1 POS'
             }
             
-            # Create reverse dictionary for French to English lookups
-            reverse_translations = {v: k for k, v in translations.items()}
-            
             print("\nDEBUG: Starting translation of Description column")
             
             def is_french(text):
                 """Check if text contains French-specific words/patterns"""
                 french_indicators = [
                     'DE', 'DES', 'PERMISSIF', 'SECTIONNEUR', 'TERRE', 'DISJONCTEUR', 
-                    'MARCHE', 'ARRET', 'ENTREE', 'INACTIVE', 'EXECUTION'
+                    'MARCHE', 'ARRET', 'ENTREE', 'INACTIVE', 'EXECUTION', 'COMMANDE',
+                    'MANUELLE', 'PORTEUSE', 'ENTRANTE', 'SORTANTE', 'EQUIPEMENT',
+                    'RELAIS', 'DEVERROUILLAGE', 'DEMARRAGE', 'ETAPE', 'ENVOI', 'CANAL',
+                    'PROTECTION'
                 ]
                 return any(indicator in text.upper() for indicator in french_indicators)
             
@@ -167,20 +182,16 @@ class ExcelProcessor:
                     
                 text_str = str(text).strip().upper()
                 
-                # First check if we have a direct translation from English to French
+                # First check if the text is French
+                if is_french(text_str):
+                    print(f"DEBUG: Keeping French text: '{text}'")
+                    return text
+                
+                # If not French, try to translate from English to French
                 if text_str in translations:
                     translated = translations[text_str]
                     print(f"DEBUG: Translated '{text}' → '{translated}'")
                     return translated
-                
-                # If text is in French, try to translate to English
-                if is_french(text_str):
-                    if text_str in reverse_translations:
-                        translated = reverse_translations[text_str]
-                        print(f"DEBUG: Translated '{text}' → '{translated}'")
-                        return translated
-                    print(f"DEBUG: No English translation found for French text: '{text}'")
-                    return text
                 
                 # If no translation found, return original
                 print(f"DEBUG: No translation found for '{text}', keeping original")
