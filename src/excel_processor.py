@@ -262,10 +262,10 @@ class ExcelProcessor:
             self.output_df['Description'] = self.output_df['Description'].apply(translate_text)
             print("DEBUG: Translation completed")
             
-            # Limit to 1000 rows if necessary
-            if len(self.output_df) > 1000:
-                self.output_df = self.output_df.head(1000)
-                print("DEBUG: Truncated to 1000 rows")
+            # Limit to 1050 rows if necessary
+            if len(self.output_df) > 1050:
+                self.output_df = self.output_df.head(1050)
+                print("DEBUG: Truncated to 1050 rows")
             
             return True
             
