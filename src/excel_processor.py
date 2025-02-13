@@ -130,11 +130,9 @@ class ExcelProcessor:
                 'POSSIBLE CLOSING': 'FERMETURE AUTORISEE',
                 'BUS-1 SELECT': 'SÉLECTION DU BUS-1',
                 'BUS-2 DESELECT': 'DÉSÉLECTION DU BUS-2',  # New translation
-                'BAY L/R MODE': 'MODE L/R TRAVEE',  # Moving to top section for visibility
+                'BAY L/R MODE': 'MODE LOCAL/DISTANT DE LA TRAVÉE',
                 'BAY L/R  MODE': 'MODE L/R TRAVEE',  # Extra space variant
-                'IINTERLOCK PERMISSIVE': 'AUTORISATION DE VERROUILLAGE',
-                
-                # Additional new translations
+                'IINTERLOCK PERMISSIVE': 'VERROUILLAGE AUTORISÉ',
                 'CARRIER IN': 'PORTEUSE ENTRANTE',
                 'CARRIER OUT': 'PORTEUSE SORTANTE',
                 'EQUIPMENT BCU': 'EQUIPEMENT BCU',  # Bloc de Contrôle Unité
@@ -195,7 +193,27 @@ class ExcelProcessor:
                 'CLOSE I/L PERMISSIVE': 'PERMISSIF V/F FERMETURE',
                 'OPEN I/L PERMISSIVE': 'PERMISSIF V/F OUVERTURE',
                 'CIRCUIT BREAKER GCB1 POSITION': 'DISJONCTEUR GCB1 POSITION',
-                'CIRCUIT BREAKER-GCB1 POS': 'DISJONCTEUR-GCB1 POS'
+                'CIRCUIT BREAKER-GCB1 POS': 'DISJONCTEUR-GCB1 POS',
+                'BUS-1 DESELECT': 'DÉSÉLECTION JEU DE BARRES-1',
+                'CB CLOSE ORDER': 'ORDRE DE FERMETURE DISJONCTEUR',
+                'ORDER RUNNING': 'ORDRE EN COURS',
+                'INTERLOCK PERMISSIVE': 'VERROUILLAGE AUTORISÉ',
+                'OPERATE': 'OPÉRER',
+                'SELECT': 'SÉLECTIONNER',
+                'SYNCHROCHECK IN PROGRESS': 'VÉRIFICATION SYNCHRO EN COURS',
+                'GENERAL TRIP': 'DÉCLENCHEMENT GÉNÉRAL',
+                '27 STAGE-1 START': 'DÉMARRAGE ÉTAPE-1 27',  # Protection minimum de tension
+                '27 STAGE-2': 'ÉTAPE-2 27',
+                '50N/51N OPTD': '50N/51N OPÉRÉ',  # Protection à maximum de courant terre
+                'OPERATING MODE': 'MODE DE FONCTIONNEMENT',
+                '21 ZONE-1 C-PH OPTD': '21 ZONE-1 PHASE-C OPÉRÉE',  # Protection de distance
+                'CARRIER SEND CHANNEL-1': 'ENVOI PORTEUSE CANAL-1',
+                '24 ALARM': 'ALARME 24',  # Protection de surexcitation V/Hz
+                'HV 64REF': 'PROTECTION TERRE RESTREINTE 64 HT',
+                '2ND HARMONIC DETECTED': '2ÈME HARMONIQUE DÉTECTÉ',
+                '87T C-PH OPTD': '87T PHASE-C OPÉRÉE',  # Protection différentielle transformateur
+                'TIME SYNCHRONISATION': 'SYNCHRONISATION TEMPORELLE',
+                '24 STAGE-1 START': 'DÉMARRAGE ÉTAPE-1 24'
             }
             
             print("\nDEBUG: Starting translation of Description column")
