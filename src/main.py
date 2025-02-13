@@ -6,7 +6,7 @@ from excel_processor import ExcelProcessor
 class ExcelTranslatorApp:
     def __init__(self, root):
         self.root = root
-        self.root.title("Excel Translator")
+        self.root.title("Translingoo")
         self.processor = ExcelProcessor()
         
         # Configure the main window
