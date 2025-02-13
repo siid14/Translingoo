@@ -257,6 +257,20 @@ class ExcelProcessor:
                 '21 ZONE-1 B-PH OPTD': '21 ZONE-1 PHASE-B DÉCLENCHÉE',
                 '21 ZONE-1 START': '21 ZONE-1 DÉMARRAGE',
                 '21 ZONE-4 START': '21 ZONE-4 DÉMARRAGE',
+                '81UF STAGE-1 START': '81UF SEUIL-1 DÉMARRAGE',
+                '81 UF STAGE-1': '81 UF SEUIL-1',
+                '81OF STAGE-1 START': '81OF SEUIL-1 DÉMARRAGE',
+                '27 STAGE-1': '27 SEUIL-1',
+                '59 STAGE-1 START': '59 SEUIL-1 DÉMARRAGE',
+                '59 STAGE-2': '59 SEUIL-2',
+                '59 STAGE-1': '59 SEUIL-1',
+                '67 OPTD': '67 DÉCLENCHÉE',
+                '21 ZONE-1 PROTECTION OPTD': '21 ZONE-1 PROTECTION DÉCLENCHÉE',
+                '21 ZONE-1 A-PH OPTD': '21 ZONE-1 PHASE-A DÉCLENCHÉE',
+                '21 ZONE-4 PROTECTION': '21 ZONE-4 PROTECTION',
+                '21 ZONE-3 START': '21 ZONE-3 DÉMARRAGE',
+                '21 ZONE-2 START': '21 ZONE-2 DÉMARRAGE',
+                '21 ZONE-2 PROTECTION OPTD': '21 ZONE-2 PROTECTION DÉCLENCHÉE',
             }
             
             print("\nDEBUG: Starting translation of Description column")
