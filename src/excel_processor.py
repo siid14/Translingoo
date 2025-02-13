@@ -250,6 +250,20 @@ class ExcelProcessor:
                 'REGULATOR R/L': 'RÉGULATEUR D/G',
                 'MOTOR MCB FAIL': 'DÉFAUT DISJONCTEUR MOTEUR',
                 'TAP CHANGER IN SERVICE': 'CHANGEUR DE PRISES EN SERVICE',
+                '81UF STAGE-1 START': '81UF SEUIL-1 DÉMARRAGE',
+                '81 UF STAGE-1': '81 UF SEUIL-1',
+                '81OF STAGE-1 START': '81OF SEUIL-1 DÉMARRAGE',
+                '27 STAGE-1': '27 SEUIL-1',
+                '59 STAGE-1 START': '59 SEUIL-1 DÉMARRAGE',
+                '59 STAGE-2': '59 SEUIL-2',
+                '59 STAGE-1': '59 SEUIL-1',
+                '21 ZONE-3 START': '21 ZONE-3 DÉMARRAGE',
+                '21 ZONE-2 START': '21 ZONE-2 DÉMARRAGE',
+                '21 ZONE-2 PROTECTION OPTD': '21 ZONE-2 PROTECTION DÉCLENCHÉE',
+                '21 ZONE-1 A-PH OPTD': '21 ZONE-1 PHASE-A DÉCLENCHÉE',
+                '21 ZONE-1 PROTECTION OPTD': '21 ZONE-1 PROTECTION DÉCLENCHÉE',
+                'SOTF PROTECTION': 'PROTECTION ESCC (Enclenchement Sur Court-Circuit)',
+                '67 OPTD': '67 DÉCLENCHÉE',
             }
             
             print("\nDEBUG: Starting translation of Description column")
