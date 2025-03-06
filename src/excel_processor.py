@@ -114,28 +114,25 @@ class ExcelProcessor:
         try:
             # Technical terms translation dictionary (English to French)
             translations = {
-                # Existing translations
                 'ABSENCE OF REFERENCE VOLTAGE': 'ABSENCE DE TENSION DE REFERENCE',
                 'ABSENCE OF VOLTAGE': 'ABSENCE DE TENSION',
-                'DEAD INCOMING DEAD RUNNING': 'ENTRÉE HORS TENSION, FONCTIONNEMENT HORS TENSION',  # Fixed spacing
-                'DEAD INCOMING  DEAD RUNNING': 'ENTRÉE HORS TENSION, FONCTIONNEMENT HORS TENSION',  # Extra space variant
-                'LIVE INCOMING LIVE RUNNING': 'ENTRÉE SOUS TENSION, FONCTIONNEMENT SOUS TENSION',   # Fixed spacing
-                'LIVE INCOMING  LIVE RUNNING': 'ENTRÉE SOUS TENSION, FONCTIONNEMENT SOUS TENSION',  # Extra space variant
+                'DEAD INCOMING DEAD RUNNING': 'ENTRÉE HORS TENSION, FONCTIONNEMENT HORS TENSION', 
+                'DEAD INCOMING  DEAD RUNNING': 'ENTRÉE HORS TENSION, FONCTIONNEMENT HORS TENSION',  
+                'LIVE INCOMING LIVE RUNNING': 'ENTRÉE SOUS TENSION, FONCTIONNEMENT SOUS TENSION',  
+                'LIVE INCOMING  LIVE RUNNING': 'ENTRÉE SOUS TENSION, FONCTIONNEMENT SOUS TENSION',  
                 'CLOSE PERMISSIVE': 'AUTORISATION DE FERMETURE',
-                
-                # New translations
                 'PRESENE OF REFERENCE VOLTAGE': 'PRÉSENCE DE TENSION DE RÉFÉRENCE',
                 'PRASENCE OF VOLTAGE': 'PRÉSENCE DE TENSION',
                 'LIVE INCOMING  DEAD RUNNING': 'ENTRÉE SOUS TENSION, FONCTIONNEMENT HORS TENSION',
                 'POSSIBLE CLOSING': 'FERMETURE AUTORISEE',
                 'BUS-1 SELECT': 'SÉLECTION DU BUS-1',
-                'BUS-2 DESELECT': 'DÉSÉLECTION DU BUS-2',  # New translation
+                'BUS-2 DESELECT': 'DÉSÉLECTION DU BUS-2',  
                 'BAY L/R MODE': 'MODE LOCAL/DISTANT DE LA TRAVÉE',
-                'BAY L/R  MODE': 'MODE L/R TRAVEE',  # Extra space variant
+                'BAY L/R  MODE': 'MODE L/R TRAVEE', 
                 'IINTERLOCK PERMISSIVE': 'VERROUILLAGE AUTORISÉ',
                 'CARRIER IN': 'PORTEUSE ENTRANTE',
                 'CARRIER OUT': 'PORTEUSE SORTANTE',
-                'EQUIPMENT BCU': 'EQUIPEMENT BCU',  # Bloc de Contrôle Unité
+                'EQUIPMENT BCU': 'EQUIPEMENT BCU',  
                 'COMMUNICATION': 'COMMUNICATION',
                 'UNLOCKING RELAY ACTIVATED': 'RELAIS DEVERROUILLAGE ACTIVE',
                 'PROTECTION': 'PROTECTION',
@@ -144,12 +141,12 @@ class ExcelProcessor:
                 'SEND CH-1': 'ENVOI CANAL 1',
                 'SEND CH-2': 'ENVOI CANAL 2',
                 'ZONE PROTECTION': 'PROTECTION DE ZONE',
-                'BPH PROTECTION': 'PROTECTION BPH',  # Bus Phase Protection Haute
-                'RPH PROTECTION': 'PROTECTION RPH',  # Remote Phase Protection Haute
-                'YPH PROTECTION': 'PROTECTION YPH',  # Yard Phase Protection Haute
+                'BPH PROTECTION': 'PROTECTION BPH',  
+                'RPH PROTECTION': 'PROTECTION RPH',     
+                'YPH PROTECTION': 'PROTECTION YPH',  
                 
                 # Overcurrent protection stages
-                '50/51 STAGE-1': 'ETAPE-1 50/51',  # Overcurrent protection stage 1
+                '50/51 STAGE-1': 'ETAPE-1 50/51', 
                 '50/51 STAGE-1 START': 'DEMARRAGE ETAPE-1 50/51',
                 '50/51 STAGE-2': 'ETAPE-2 50/51',
                 '50/51 STAGE-2 START': 'DEMARRAGE ETAPE-2 50/51',
@@ -202,16 +199,16 @@ class ExcelProcessor:
                 'SELECT': 'SÉLECTIONNER',
                 'SYNCHROCHECK IN PROGRESS': 'VÉRIFICATION SYNCHRO EN COURS',
                 'GENERAL TRIP': 'DÉCLENCHEMENT GÉNÉRAL',
-                '27 STAGE-1 START': 'DÉMARRAGE ÉTAPE-1 27',  # Protection minimum de tension
+                '27 STAGE-1 START': 'DÉMARRAGE ÉTAPE-1 27',  
                 '27 STAGE-2': 'ÉTAPE-2 27',
-                '50N/51N OPTD': '50N/51N OPÉRÉ',  # Protection à maximum de courant terre
+                '50N/51N OPTD': '50N/51N OPÉRÉ', 
                 'OPERATING MODE': 'MODE DE FONCTIONNEMENT',
-                '21 ZONE-1 C-PH OPTD': '21 ZONE-1 PHASE-C OPÉRÉE',  # Protection de distance
+                '21 ZONE-1 C-PH OPTD': '21 ZONE-1 PHASE-C OPÉRÉE',  
                 'CARRIER SEND CHANNEL-1': 'ENVOI PORTEUSE CANAL-1',
-                '24 ALARM': 'ALARME 24',  # Protection de surexcitation V/Hz
+                '24 ALARM': 'ALARME 24', 
                 'HV 64REF': 'PROTECTION TERRE RESTREINTE 64 HT',
                 '2ND HARMONIC DETECTED': '2ÈME HARMONIQUE DÉTECTÉ',
-                '87T C-PH OPTD': '87T PHASE-C OPÉRÉE',  # Protection différentielle transformateur
+                '87T C-PH OPTD': '87T PHASE-C OPÉRÉE',  
                 'TIME SYNCHRONISATION': 'SYNCHRONISATION TEMPORELLE',
                 '24 STAGE-1 START': 'DÉMARRAGE ÉTAPE-1 24',
 
@@ -223,14 +220,14 @@ class ExcelProcessor:
                 # High voltage earth fault protection translations
                 'HV 50N/51N STAGE-1 START': 'DÉMARRAGE ÉTAPE-1 50N/51N HT',
                 'HV 50N/51N STAGE-1': 'ÉTAPE-1 50N/51N HT',
-                'HV 50N/51N STAGE-2 START': 'DÉMARRAGE ÉTAPE-2 50N/51N HT',  # Protection à maximum de courant terre haute tension
+                'HV 50N/51N STAGE-2 START': 'DÉMARRAGE ÉTAPE-2 50N/51N HT', 
                 'HV 50N/51N STAGE-2': 'ÉTAPE-2 50N/51N HT',
                 
                 # Overcurrent protection translations
                 '50/51 STAGE-1 A-PH': 'ÉTAPE-1 50/51 PHASE-A',
-                '50/51 STAGE-1 B-PH': 'ÉTAPE-1 50/51 PHASE-B',  # Protection à maximum de courant phase B
-                '50/51 STAGE-1 C-PH': 'ÉTAPE-1 50/51 PHASE-C',  # Protection à maximum de courant phase C
-                '24 STAGE-1': 'ÉTAPE-1 24',  # Protection de surexcitation V/Hz
+                '50/51 STAGE-1 B-PH': 'ÉTAPE-1 50/51 PHASE-B',  
+                '50/51 STAGE-1 C-PH': 'ÉTAPE-1 50/51 PHASE-C',  
+                '24 STAGE-1': 'ÉTAPE-1 24', 
 
                 # Switchgear and operational status translations
                 '+SWG EFS B8 OPERATIONAL': '+TBT EFS B8 OPÉRATIONNEL',
