@@ -130,8 +130,8 @@ class ExcelProcessor:
                 'BAY L/R MODE': 'MODE LOCAL/DISTANT DE LA TRAVÉE',
                 'BAY L/R  MODE': 'MODE L/R TRAVEE', 
                 'IINTERLOCK PERMISSIVE': 'VERROUILLAGE AUTORISÉ',
-                'CARRIER IN': 'PORTEUSE ENTRANTE',
-                'CARRIER OUT': 'PORTEUSE SORTANTE',
+                'CARRIER IN': 'DEMARRAGE PROTECTION DE DISTANCE LIGNE',
+                'CARRIER OUT': 'FIN DE DEMARRAGE PROTECTION DE DISTANCE LIGNE',
                 'EQUIPMENT BCU': 'EQUIPEMENT BCU',  
                 'COMMUNICATION': 'COMMUNICATION',
                 'UNLOCKING RELAY ACTIVATED': 'RELAIS DEVERROUILLAGE ACTIVE',
@@ -146,35 +146,41 @@ class ExcelProcessor:
                 'YPH PROTECTION': 'PROTECTION YPH',  
                 
                 # Overcurrent protection stages
-                '50/51 STAGE-1': 'ETAPE-1 50/51', 
-                '50/51 STAGE-1 START': 'DEMARRAGE ETAPE-1 50/51',
-                '50/51 STAGE-2': 'ETAPE-2 50/51',
-                '50/51 STAGE-2 START': 'DEMARRAGE ETAPE-2 50/51',
+                '50/51 STAGE-1': 'DECLENCHEMENT 1er STADE 50/51', 
+                '50/51 STAGE-1 START': 'DEMARRAGE 1er STADE 50/51',
+                '50/51 STAGE-2': 'DECLENCHEMENT 2ième STADE 50/51',
+                '50/51 STAGE-2 START': 'DEMARRAGE 2ième STADE 50/51',
+
+                'CB-GCB1 OPEN': 'CB-GCB1 OUVERT',
+                
                 
                 # Communication
-                'DT SEND CH-1': 'ENVOI CANAL-1 DT',
-                'DT SEND CH-2': 'ENVOI CANAL-2 DT',
+                'DT SEND CH-1': 'ENVOI SIGNAL DT CANAL-1 ',
+                'DT SEND CH-2': 'ENVOI SIGNAL DT CANAL-2 ',
                 
                 # Directional Protection
-                '67N STAGE-1': 'ETAPE-1 67N',
-                '67N STAGE-1 START': 'DEMARRAGE ETAPE-1 67N',
+                '67N STAGE-1': 'EDECLENCHEMENT 1er  STADE 67N',
+                '67N STAGE-1 START': 'DEMARRAGE 1er STADE 67N',
                 
                 # Zone Protection
-                '21 ZONE-1 PROTECTION': 'PROTECTION ZONE-1 21',
-                '21 ZONE-2 PROTECTION': 'PROTECTION ZONE-2 21',
-                '21 ZONE-3 PROTECTION': 'PROTECTION ZONE-3 21',
-                '21 ZONE-4 PROTECTION': 'PROTECTION ZONE-4 21',
-                '21 ZONE-1 PROTECTION START': 'DEMARRAGE PROTECTION ZONE-1 21',
-                '21 ZONE-2 PROTECTION START': 'DEMARRAGE PROTECTION ZONE-2 21',
-                '21 ZONE-3 PROTECTION START': 'DEMARRAGE PROTECTION ZONE-3 21',
-                '21 ZONE-4 PROTECTION START': 'DEMARRAGE PROTECTION ZONE-4 21',
-                '21 ZONE-1 YPH PROTECTION': 'PROTECTION YPH ZONE-1 21',
-                '21 ZONE-1 BPH PROTECTION': 'PROTECTION BPH ZONE-1 21',
+                '21 ZONE-1 PROTECTION': '21 ZONE-1 DECLENCHEMENT PROTECTION',
+                '21 ZONE-2 PROTECTION': '21 ZONE-2 DECLENCHEMENT PROTECTION',
+                '21 ZONE-3 PROTECTION': '21 ZONE-3 DECLENCHEMENT PROTECTION',
+                '21 ZONE-4 PROTECTION': '21 ZONE-4 DECLENCHEMENT PROTECTION',
+                '21 ZONE-1 PROTECTION START': '21 ZONE-1 DEMARRAGE PROTECTION',
+                '21 ZONE-2 PROTECTION START': '21 ZONE-2 DEMARRAGE PROTECTION',
+                '21 ZONE-3 PROTECTION START': '21 ZONE-3 DEMARRAGE PROTECTION',
+                '21 ZONE-4 PROTECTION START': '21 ZONE-4 DEMARRAGE PROTECTION',
+                '21 ZONE-1 RPH PROTECTION': '21 ZONE-1 DECLENCHEMENT PROTECTION PHASE A',
+                '21 ZONE-1 YPH PROTECTION': '21 ZONE-1 DECLENCHEMENT PROTECTION PHASE B',
+                '21 ZONE-1 BPH PROTECTION': '21 ZONE-1 DECLENCHEMENT PROTECTION PHASE C',
+               
                 
                 # Differential Protection
-                '87L PROTECTION': 'PROTECTION 87L',
+                '87L PROTECTION': 'DECLENCHEMENT PROTECTION 87L',
                 '87L PROTECTION START': 'DEMARRAGE PROTECTION 87L',
-                '87L PROTECTION A-PH': 'PROTECTION 87L PHASE-A',
+                '87L PROTECTION A-PH': 'DECLENCHEMENT PROTECTION 87L PHASE A',
+                '87L PROTECTION B-PH': 'DECLENCHEMENT PROTECTION 87L PHASE B',
                 
                 # Rest of existing translations
                 'ON/OFF SECONDARY SPS': 'MARCHE/ARRET SPS SECONDAIRE',
