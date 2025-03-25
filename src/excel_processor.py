@@ -244,12 +244,16 @@ class ExcelProcessor:
                 'DC MCB TRIP': 'DÉCLENCHEMENT DISJONCTEUR CC',
                 '6MET-DC MCB TRIP': 'DÉCLENCHEMENT DISJONCTEUR CC 6MET',
 
-                # New translations
+                'ZONE-1 50BF': 'ZONE-1 50BF_DEFAILLANCE DISJONCTEUR',
+                'ZONE-2 50BF': 'ZONE-2 50BF_DEFAILLANCE DISJONCTEUR',
+                'ZONE-1 87BB': 'ZONE-1 87BB_DEFAILLANCE TRANSFORMATEUR',
+                
+                
                 'BAY MODE': 'MODE TRAVÉE',
                 '+6R3 EFS B3 OPERATIONAL': '+6R3 EFS B3 EN SERVICE',
                 '+6R1 EFS B1 OPERATIONAL': '+6R1 EFS B1 EN SERVICE',
                 '+6R3 EFS B4 OPERATIONAL': '+6R3 EFS B4 EN SERVICE',
-                'REGULATOR R/L': 'RÉGULATEUR D/G',
+                'REGULATOR R/L': 'REGULATEUR DISTANCE/LOCAL',
                 'MOTOR MCB FAIL': 'DÉFAUT DISJONCTEUR MOTEUR',
                 'TAP CHANGER IN SERVICE': 'CHANGEUR DE PRISES EN SERVICE',
                 '21 OPTD': '21 DÉCLENCHÉE',
