@@ -374,6 +374,14 @@ class ExcelProcessor:
                 'Set - App Ack': 'Réglé - App Ack',
                 'Set - App Ack   ': 'Réglé - App Ack',
                 'SET - APP ACK': 'RÉGLÉ - APP ACK',
+                'On Sync': 'En Synchronisation',
+                'ON SYNC': 'EN SYNCHRONISATION',
+                'TRIP - App Ack': 'DÉCLENCHEMENT - App Ack',
+                'TRIP - APP ACK': 'DÉCLENCHEMENT - APP ACK',
+                'Healthy': 'En Bon État',
+                'HEALTHY': 'EN BON ÉTAT',
+                'Fail': 'Défaillance',
+                'FAIL': 'DÉFAILLANCE',
                 'ABSENCE TENSION': 'ABSENCE DE TENSION',
                 'DEFAULT ALIM CG MCB1/MCB2 DECLENCHEE': 'DÉFAUT ALIM CG MCB1/MCB2 DÉCLENCHÉE',
                 'EFS-52 OPERATIONAL': 'EFS-52 OPÉRATIONNEL',
@@ -426,15 +434,22 @@ class ExcelProcessor:
                 if pd.isna(text) or text is None or str(text).strip() == '':
                     return text
                 
-                # Handle the specific case with trailing spaces
-                original_text = str(text)
-                if original_text.strip() == "Set - App Ack" or original_text.startswith("Set - App Ack "):
-                    print(f"DEBUG: Translated '{text}' → 'Réglé - App Ack' (special case)")
-                    return "Réglé - App Ack"
+                # Handle specific cases with trailing spaces
+                original_text = str(text).strip()
+                special_cases = {
+                    "Set - App Ack": "Réglé - App Ack",
+                    "Reset - App Ack": "Réinitialisé - App Ack",
+                    "TRIP - App Ack": "DÉCLENCHEMENT - App Ack",
+                    "On Sync": "En Synchronisation",
+                    "Healthy": "En Bon État",
+                    "Fail": "Défaillance"
+                }
                 
-                if original_text.strip() == "Reset - App Ack" or original_text.startswith("Reset - App Ack "):
-                    print(f"DEBUG: Translated '{text}' → 'Réinitialisé - App Ack' (special case)")
-                    return "Réinitialisé - App Ack"
+                # Check if the stripped text matches any of our special cases
+                for case, translation in special_cases.items():
+                    if original_text.upper() == case.upper() or original_text.upper().startswith(case.upper() + " "):
+                        print(f"DEBUG: Translated '{text}' → '{translation}' (special case)")
+                        return translation
                     
                 # Normalize the text by removing extra spaces (both within and at the end)
                 text_str = ' '.join(str(text).strip().upper().split())
