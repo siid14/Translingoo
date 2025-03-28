@@ -15,8 +15,33 @@ class ExcelProcessor:
             # Use pandas to read the Excel file directly
             try:
                 print("DEBUG: Attempting to load with pandas directly")
-                self.input_df = pd.read_excel(file_path, engine='openpyxl')
-                print(f"DEBUG: Successfully loaded Excel file with pandas")
+                # Try to read the file without header first to examine the structure
+                raw_df = pd.read_excel(file_path, engine='openpyxl', header=None)
+                print(f"DEBUG: Successfully loaded raw Excel file with pandas")
+                
+                # Determine the header row - usually the first row that contains "Description" or "Message"
+                header_row = None
+                for i in range(min(20, len(raw_df))):  # Check first 20 rows
+                    row_values = raw_df.iloc[i].astype(str)
+                    if "Description" in row_values.values or "Message" in row_values.values:
+                        header_row = i
+                        break
+                
+                # If header row found, read again with that as the header
+                if header_row is not None:
+                    print(f"DEBUG: Found header at row {header_row}")
+                    self.input_df = pd.read_excel(file_path, engine='openpyxl', header=header_row)
+                else:
+                    print("DEBUG: Using first row as header")
+                    self.input_df = pd.read_excel(file_path, engine='openpyxl')
+                
+                # Clean up column names - replace unnamed columns with meaningful names
+                renamed_columns = {}
+                for col in self.input_df.columns:
+                    if 'Unnamed' in str(col):
+                        # Skip renaming these columns as they're likely empty in the original file
+                        continue
+                
                 print(f"DEBUG: DataFrame shape: {self.input_df.shape}")
                 print(f"DEBUG: Columns: {self.input_df.columns.tolist()}")
                 
@@ -138,7 +163,31 @@ class ExcelProcessor:
         self.output_df = self.input_df.copy()
         print(f"DEBUG: Created output DataFrame with {len(self.output_df)} rows")
         
-        # Check if specified columns exist in the DataFrame
+        # Check if the specified columns exist in the DataFrame
+        # First get a normalized list of available columns (removing Unnamed ones)
+        available_columns = [col for col in self.output_df.columns if 'Unnamed' not in str(col)]
+        print(f"DEBUG: Available columns for translation: {available_columns}")
+        
+        # Check for exact matches first
+        missing_columns = [col for col in columns_to_translate if col not in self.output_df.columns]
+        
+        # If there are missing columns, try case-insensitive matching
+        if missing_columns:
+            column_mapping = {}
+            lower_columns = {str(col).lower(): col for col in self.output_df.columns}
+            
+            for col in missing_columns[:]:  # Use a copy since we'll modify the list
+                if col.lower() in lower_columns:
+                    # Found a case-insensitive match
+                    actual_col = lower_columns[col.lower()]
+                    column_mapping[col] = actual_col
+                    missing_columns.remove(col)
+                    print(f"DEBUG: Found case-insensitive match for '{col}': '{actual_col}'")
+            
+            # Update columns_to_translate with the actual column names
+            columns_to_translate = [column_mapping.get(col, col) for col in columns_to_translate]
+        
+        # Check if any columns are still missing
         missing_columns = [col for col in columns_to_translate if col not in self.output_df.columns]
         if missing_columns:
             print(f"DEBUG: Columns not found: {missing_columns}")
@@ -313,9 +362,17 @@ class ExcelProcessor:
                 'OPEN': 'OUVERT',
                 'ON': 'ACTIVÉ',
                 'Set': 'Réglé',
+                'Set   ': 'Réglé',
+                'SET': 'RÉGLÉ',
                 'Reset': 'Réinitialisé',
+                'RESET': 'RÉINITIALISÉ',
                 'Reset - App Ack': 'Réinitialisé - App Ack',
+                'Reset - App Ack   ': 'Réinitialisé - App Ack',
+                'RESET - APP ACK': 'RÉINITIALISÉ - APP ACK',
                 'OPEN - App Ack': 'OUVERT - App Ack',
+                'OPEN - App Ack   ': 'OUVERT - App Ack',
+                'Set - App Ack': 'Réglé - App Ack',
+                'Set - App Ack   ': 'Réglé - App Ack',
                 'ABSENCE TENSION': 'ABSENCE DE TENSION',
                 'DEFAULT ALIM CG MCB1/MCB2 DECLENCHEE': 'DÉFAUT ALIM CG MCB1/MCB2 DÉCLENCHÉE',
                 'EFS-52 OPERATIONAL': 'EFS-52 OPÉRATIONNEL',
@@ -323,7 +380,20 @@ class ExcelProcessor:
                 'ABSENCE TENSION 125V CG2': 'ABSENCE DE TENSION 125V CG2',
                 'DISJONCTEUR QE1': 'DISJONCTEUR QE1',
                 'DISJONCTEUR QE2': 'DISJONCTEUR QE2',
-                'DISJONCTEUR QE3': 'DISJONCTEUR QE3'
+                'DISJONCTEUR QE3': 'DISJONCTEUR QE3',
+                
+                # From image
+                'DISJONCTEUR QR3': 'DISJONCTEUR QR3',
+                'DISJONCTEUR QR4': 'DISJONCTEUR QR4', 
+                'DISJONCTEUR QB1': 'DISJONCTEUR QB1',
+                'DISJONCTEUR QS1': 'DISJONCTEUR QS1',
+                'DISJONCTEUR QS2': 'DISJONCTEUR QS2',
+                'DISJONCTEUR QQ2': 'DISJONCTEUR QQ2',
+                'DISJONCTEUR QG1': 'DISJONCTEUR QG1',
+                'DISJONCTEUR QD1': 'DISJONCTEUR QD1',
+                'BAD STATE': 'MAUVAIS ÉTAT',
+                'EN SERVICE': 'EN SERVICE',
+                'OPÉRATIONNEL': 'OPÉRATIONNEL'
             }
             
             def is_french(text):
@@ -333,11 +403,11 @@ class ExcelProcessor:
                     'MARCHE', 'ARRET', 'ENTREE', 'INACTIVE', 'EXECUTION', 'COMMANDE',
                     'MANUELLE', 'PORTEUSE', 'ENTRANTE', 'SORTANTE', 'EQUIPEMENT',
                     'RELAIS', 'DEVERROUILLAGE', 'DEMARRAGE', 'ETAPE', 'ENVOI', 'CANAL',
-                    'PROTECTION', 'PHASE', 'ZONE'
+                    'PROTECTION', 'PHASE', 'ZONE', 'MAUVAIS', 'ÉTAT', 'OUVERT', 'ACTIVÉ'
                 ]
                 
                 english_indicators = [
-                    'OPERATING', 'MODE', 'HARMONIC', 'DETECTED', '2ND', 'BAY'
+                    'OPERATING', 'MODE', 'HARMONIC', 'DETECTED', '2ND', 'BAY', 'REMOTE', 'OPERATIONAL'
                 ]
                 
                 words = text.upper().split()
@@ -355,7 +425,7 @@ class ExcelProcessor:
                 if pd.isna(text) or text is None or str(text).strip() == '':
                     return text
                     
-                # Normalize the text by removing extra spaces
+                # Normalize the text by removing extra spaces (both within and at the end)
                 text_str = ' '.join(str(text).strip().upper().split())
                 
                 # First check if the text is French
@@ -375,6 +445,14 @@ class ExcelProcessor:
                     translated = translations[original_upper]
                     print(f"DEBUG: Translated '{text}' → '{translated}'")
                     return translated
+                    
+                # Try with additional variations for handling whitespace
+                for key in translations:
+                    # Try matching ignoring extra spaces
+                    if ' '.join(text_str.split()) == ' '.join(key.split()):
+                        translated = translations[key]
+                        print(f"DEBUG: Translated '{text}' → '{translated}' (space-normalized)")
+                        return translated
                 
                 # If no translation found, return original
                 print(f"DEBUG: No translation found for '{text}', keeping original")
