@@ -373,6 +373,7 @@ class ExcelProcessor:
                 'OPEN - App Ack   ': 'OUVERT - App Ack',
                 'Set - App Ack': 'Réglé - App Ack',
                 'Set - App Ack   ': 'Réglé - App Ack',
+                'SET - APP ACK': 'RÉGLÉ - APP ACK',
                 'ABSENCE TENSION': 'ABSENCE DE TENSION',
                 'DEFAULT ALIM CG MCB1/MCB2 DECLENCHEE': 'DÉFAUT ALIM CG MCB1/MCB2 DÉCLENCHÉE',
                 'EFS-52 OPERATIONAL': 'EFS-52 OPÉRATIONNEL',
@@ -424,6 +425,16 @@ class ExcelProcessor:
             def translate_text(text):
                 if pd.isna(text) or text is None or str(text).strip() == '':
                     return text
+                
+                # Handle the specific case with trailing spaces
+                original_text = str(text)
+                if original_text.strip() == "Set - App Ack" or original_text.startswith("Set - App Ack "):
+                    print(f"DEBUG: Translated '{text}' → 'Réglé - App Ack' (special case)")
+                    return "Réglé - App Ack"
+                
+                if original_text.strip() == "Reset - App Ack" or original_text.startswith("Reset - App Ack "):
+                    print(f"DEBUG: Translated '{text}' → 'Réinitialisé - App Ack' (special case)")
+                    return "Réinitialisé - App Ack"
                     
                 # Normalize the text by removing extra spaces (both within and at the end)
                 text_str = ' '.join(str(text).strip().upper().split())
