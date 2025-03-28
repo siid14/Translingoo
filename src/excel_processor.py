@@ -12,6 +12,31 @@ class ExcelProcessor:
             print(f"\nDEBUG: Attempting to load file: {file_path}")
             print(f"DEBUG: File exists: {Path(file_path).exists()}")
             
+            # Use pandas to read the Excel file directly
+            try:
+                print("DEBUG: Attempting to load with pandas directly")
+                self.input_df = pd.read_excel(file_path, engine='openpyxl')
+                print(f"DEBUG: Successfully loaded Excel file with pandas")
+                print(f"DEBUG: DataFrame shape: {self.input_df.shape}")
+                print(f"DEBUG: Columns: {self.input_df.columns.tolist()}")
+                
+                if len(self.input_df) > 0:
+                    print("\nDEBUG: File Content Preview:")
+                    print(self.input_df.head())
+                    return True
+                else:
+                    print("DEBUG: DataFrame is empty")
+                    # Try alternate approach with sheet_name
+                    self.input_df = pd.read_excel(file_path, engine='openpyxl', sheet_name=0)
+                    print(f"DEBUG: Loaded with sheet_name=0, shape: {self.input_df.shape}")
+                    print("\nDEBUG: File Content Preview:")
+                    print(self.input_df.head())
+                    return True
+            except Exception as e:
+                print(f"DEBUG: Error with pandas direct loading: {str(e)}")
+                print("DEBUG: Trying fallback method...")
+            
+            # Fallback to the zipfile method if pandas direct loading fails
             import zipfile
             import xml.etree.ElementTree as ET
             
@@ -72,11 +97,16 @@ class ExcelProcessor:
                             print(f"Row {len(data)}: {row_data}")
                     
                     # Create DataFrame
-                    self.input_df = pd.DataFrame(data[13:])  # Skip first 13 rows as before
+                    if not data:
+                        print("DEBUG: No data found in the Excel file")
+                        return False
+                        
+                    self.input_df = pd.DataFrame(data)
                     
                     # Set column names based on the first row
-                    self.input_df.columns = self.input_df.iloc[0]
-                    self.input_df = self.input_df[1:]  # Remove the header row
+                    if len(self.input_df) > 0:
+                        self.input_df.columns = self.input_df.iloc[0]
+                        self.input_df = self.input_df[1:]  # Remove the header row
                     
                     print("\nDEBUG: Successfully created DataFrame")
                     print("\nDEBUG: File Content Preview:")
@@ -93,21 +123,25 @@ class ExcelProcessor:
             print(f"- File path: {file_path}")
             return False
 
-    def process_file(self):
+    def process_file(self, columns_to_translate=None):
         """Process the loaded Excel file."""
         if self.input_df is None:
             print("DEBUG: input_df is None")
             return False
         
-        print("\nDEBUG: Starting file processing")
+        if columns_to_translate is None:
+            columns_to_translate = ["Description"]
+            
+        print(f"\nDEBUG: Starting file processing with columns to translate: {columns_to_translate}")
         
         # Create a copy of the input DataFrame
         self.output_df = self.input_df.copy()
         print(f"DEBUG: Created output DataFrame with {len(self.output_df)} rows")
         
-        # Ensure we have the Description column
-        if 'Description' not in self.output_df.columns:
-            print("DEBUG: 'Description' column not found")
+        # Check if specified columns exist in the DataFrame
+        missing_columns = [col for col in columns_to_translate if col not in self.output_df.columns]
+        if missing_columns:
+            print(f"DEBUG: Columns not found: {missing_columns}")
             print(f"DEBUG: Available columns: {self.output_df.columns.tolist()}")
             return False
             
@@ -244,6 +278,7 @@ class ExcelProcessor:
 
                 # New translations
                 'BAY MODE': 'MODE TRAVÉE',
+                'MODE TRAVEL': 'MODE TRAVÉE',
                 '+6R3 EFS B3 OPERATIONAL': '+6R3 EFS B3 EN SERVICE',
                 '+6R1 EFS B1 OPERATIONAL': '+6R1 EFS B1 EN SERVICE',
                 '+6R3 EFS B4 OPERATIONAL': '+6R3 EFS B4 EN SERVICE',
@@ -271,9 +306,25 @@ class ExcelProcessor:
                 '21 ZONE-3 START': '21 ZONE-3 DÉMARRAGE',
                 '21 ZONE-2 START': '21 ZONE-2 DÉMARRAGE',
                 '21 ZONE-2 PROTECTION OPTD': '21 ZONE-2 PROTECTION DÉCLENCHÉE',
+                
+                # Message column specific translations
+                'REMOTE': 'DISTANT',
+                'BAD STATE': 'MAUVAIS ÉTAT',
+                'OPEN': 'OUVERT',
+                'ON': 'ACTIVÉ',
+                'Set': 'Réglé',
+                'Reset': 'Réinitialisé',
+                'Reset - App Ack': 'Réinitialisé - App Ack',
+                'OPEN - App Ack': 'OUVERT - App Ack',
+                'ABSENCE TENSION': 'ABSENCE DE TENSION',
+                'DEFAULT ALIM CG MCB1/MCB2 DECLENCHEE': 'DÉFAUT ALIM CG MCB1/MCB2 DÉCLENCHÉE',
+                'EFS-52 OPERATIONAL': 'EFS-52 OPÉRATIONNEL',
+                'EFS-SB2 OPERATIONAL': 'EFS-SB2 OPÉRATIONNEL',
+                'ABSENCE TENSION 125V CG2': 'ABSENCE DE TENSION 125V CG2',
+                'DISJONCTEUR QE1': 'DISJONCTEUR QE1',
+                'DISJONCTEUR QE2': 'DISJONCTEUR QE2',
+                'DISJONCTEUR QE3': 'DISJONCTEUR QE3'
             }
-            
-            print("\nDEBUG: Starting translation of Description column")
             
             def is_french(text):
                 """Check if text contains French-specific words/patterns"""
@@ -329,8 +380,34 @@ class ExcelProcessor:
                 print(f"DEBUG: No translation found for '{text}', keeping original")
                 return text
             
-            # Apply translation
-            self.output_df['Description'] = self.output_df['Description'].apply(translate_text)
+            # Apply translation to each selected column
+            for column in columns_to_translate:
+                print(f"\nDEBUG: Starting translation of '{column}' column")
+                
+                # Create a new column for the translation
+                new_column_name = f"{column} Français"
+                
+                # Translate the column and add it next to the original column
+                translated_values = self.output_df[column].apply(translate_text)
+                
+                # Get the position of the current column
+                column_position = self.output_df.columns.get_loc(column)
+                
+                # Create a new DataFrame with all columns before the current one
+                columns_before = list(self.output_df.columns[:column_position + 1])
+                
+                # Create a list of all columns after the current one
+                columns_after = list(self.output_df.columns[column_position + 1:])
+                
+                # Reorganize the DataFrame
+                self.output_df = pd.concat([
+                    self.output_df[columns_before], 
+                    translated_values.rename(new_column_name),
+                    self.output_df[columns_after]
+                ], axis=1)
+                
+                print(f"DEBUG: Added new column '{new_column_name}'")
+            
             print("DEBUG: Translation completed")
             
             # Limit to 1050 rows if necessary
