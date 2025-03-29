@@ -431,7 +431,9 @@ class ExcelProcessor:
                 'DISJONCTEUR QD1': 'DISJONCTEUR QD1',
                 'BAD STATE': 'MAUVAIS ÉTAT',
                 'EN SERVICE': 'EN SERVICE',
-                'OPÉRATIONNEL': 'OPÉRATIONNEL'
+                'OPÉRATIONNEL': 'OPÉRATIONNEL',
+                'Operational Mode': 'Mode Opérationnel',
+                'OPERATIONAL MODE': 'MODE OPÉRATIONNEL'
             }
             
             def is_french(text):
@@ -484,6 +486,7 @@ class ExcelProcessor:
                     "Closed": "Fermé",
                     "On Sync": "En Synchronisation",
                     "Healthy": "En Bon État",
+                    "Operational Mode": "Mode Opérationnel",
                     "Fail": "Défaillance",
                     "Faulty": "Défectueux"
                 }
@@ -500,6 +503,7 @@ class ExcelProcessor:
                     "Faulty - Clearing": "Défectueux - Effacement",
                     "Operated - Clearing": "Opéré - Effacement",
                     "Operated - App Ack": "Opéré - App Ack",
+                    "Operational Mode": "Mode Opérationnel",
                     "Set": "Réglé",
                     "Reset": "Réinitialisé",
                     "Operated": "Opéré"
