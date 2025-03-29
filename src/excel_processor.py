@@ -377,6 +377,9 @@ class ExcelProcessor:
                 'Set - App Ack': 'Réglé - App Ack',
                 'Set - App Ack   ': 'Réglé - App Ack',
                 'SET - APP ACK': 'RÉGLÉ - APP ACK',
+                'Set - Clearing': 'Réglé - Effacement',
+                'Set - Clearing   ': 'Réglé - Effacement',
+                'SET - CLEARING': 'RÉGLÉ - EFFACEMENT',
                 'On Sync': 'En Synchronisation',
                 'ON SYNC': 'EN SYNCHRONISATION',
                 'TRIP - App Ack': 'DÉCLENCHEMENT - App Ack',
@@ -389,6 +392,11 @@ class ExcelProcessor:
                 'HEALTHY': 'EN BON ÉTAT',
                 'Fail': 'Défaillance',
                 'FAIL': 'DÉFAILLANCE',
+                'Faulty': 'Défectueux', 
+                'FAULTY': 'DÉFECTUEUX',
+                'Faulty - Clearing': 'Défectueux - Effacement',
+                'Faulty - Clearing   ': 'Défectueux - Effacement',
+                'FAULTY - CLEARING': 'DÉFECTUEUX - EFFACEMENT',
                 'Fail - Clearing': 'Défaillance - Effacement',
                 'Fail - Clearing   ': 'Défaillance - Effacement',
                 'FAIL - CLEARING': 'DÉFAILLANCE - EFFACEMENT',
@@ -457,13 +465,16 @@ class ExcelProcessor:
                     "TRIP - App Ack": "DÉCLENCHEMENT - App Ack",
                     "OPEN - App Ack": "OUVERT - App Ack",
                     "OPEN - Clearing": "OUVERT - Effacement",
+                    "Set - Clearing": "Réglé - Effacement",
                     "Fail - App Ack": "Défaillance - App Ack",
                     "Fail - Clearing": "Défaillance - Effacement",
+                    "Faulty - Clearing": "Défectueux - Effacement",
                     "Trip": "Déclenchement",
                     "Closed": "Fermé",
                     "On Sync": "En Synchronisation",
                     "Healthy": "En Bon État",
-                    "Fail": "Défaillance"
+                    "Fail": "Défaillance",
+                    "Faulty": "Défectueux"
                 }
                 
                 # Check common patterns with trailing spaces that cause issues
@@ -472,8 +483,10 @@ class ExcelProcessor:
                     "Reset - App Ack": "Réinitialisé - App Ack",
                     "OPEN - App Ack": "OUVERT - App Ack",
                     "OPEN - Clearing": "OUVERT - Effacement",
+                    "Set - Clearing": "Réglé - Effacement",
                     "Fail - App Ack": "Défaillance - App Ack",
                     "Fail - Clearing": "Défaillance - Effacement",
+                    "Faulty - Clearing": "Défectueux - Effacement",
                     "Set": "Réglé",
                     "Reset": "Réinitialisé"
                 }
