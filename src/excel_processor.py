@@ -1,5 +1,6 @@
 import pandas as pd
 from pathlib import Path
+import re
 
 class ExcelProcessor:
     def __init__(self):
@@ -371,6 +372,8 @@ class ExcelProcessor:
                 'RESET - APP ACK': 'RÉINITIALISÉ - APP ACK',
                 'OPEN - App Ack': 'OUVERT - App Ack',
                 'OPEN - App Ack   ': 'OUVERT - App Ack',
+                'OPEN - Clearing': 'OUVERT - Effacement',
+                'OPEN - CLEARING': 'OUVERT - EFFACEMENT',
                 'Set - App Ack': 'Réglé - App Ack',
                 'Set - App Ack   ': 'Réglé - App Ack',
                 'SET - APP ACK': 'RÉGLÉ - APP ACK',
@@ -386,6 +389,12 @@ class ExcelProcessor:
                 'HEALTHY': 'EN BON ÉTAT',
                 'Fail': 'Défaillance',
                 'FAIL': 'DÉFAILLANCE',
+                'Fail - Clearing': 'Défaillance - Effacement',
+                'Fail - Clearing   ': 'Défaillance - Effacement',
+                'FAIL - CLEARING': 'DÉFAILLANCE - EFFACEMENT',
+                'Fail - App Ack': 'Défaillance - App Ack',
+                'Fail - App Ack   ': 'Défaillance - App Ack',
+                'FAIL - APP ACK': 'DÉFAILLANCE - APP ACK',
                 'ABSENCE TENSION': 'ABSENCE DE TENSION',
                 'DEFAULT ALIM CG MCB1/MCB2 DECLENCHEE': 'DÉFAUT ALIM CG MCB1/MCB2 DÉCLENCHÉE',
                 'EFS-52 OPERATIONAL': 'EFS-52 OPÉRATIONNEL',
@@ -439,11 +448,17 @@ class ExcelProcessor:
                     return text
                 
                 # Handle specific cases with trailing spaces
-                original_text = str(text).strip()
+                original_text = str(text)
+                stripped_text = original_text.strip()
+                
                 special_cases = {
                     "Set - App Ack": "Réglé - App Ack",
                     "Reset - App Ack": "Réinitialisé - App Ack",
                     "TRIP - App Ack": "DÉCLENCHEMENT - App Ack",
+                    "OPEN - App Ack": "OUVERT - App Ack",
+                    "OPEN - Clearing": "OUVERT - Effacement",
+                    "Fail - App Ack": "Défaillance - App Ack",
+                    "Fail - Clearing": "Défaillance - Effacement",
                     "Trip": "Déclenchement",
                     "Closed": "Fermé",
                     "On Sync": "En Synchronisation",
@@ -451,9 +466,28 @@ class ExcelProcessor:
                     "Fail": "Défaillance"
                 }
                 
-                # Check if the stripped text matches any of our special cases
+                # Check common patterns with trailing spaces that cause issues
+                known_patterns = {
+                    "Set - App Ack": "Réglé - App Ack",
+                    "Reset - App Ack": "Réinitialisé - App Ack",
+                    "OPEN - App Ack": "OUVERT - App Ack",
+                    "OPEN - Clearing": "OUVERT - Effacement",
+                    "Fail - App Ack": "Défaillance - App Ack",
+                    "Fail - Clearing": "Défaillance - Effacement",
+                    "Set": "Réglé",
+                    "Reset": "Réinitialisé"
+                }
+                
+                # Check for exact matches including spaces first (more specific)
+                for pattern, translation in known_patterns.items():
+                    # If the text starts with the pattern plus optional spaces, translate it
+                    if re.match(f"^{re.escape(pattern)}\\s*$", original_text, re.IGNORECASE):
+                        print(f"DEBUG: Translated '{text}' → '{translation}' (pattern with spaces)")
+                        return translation
+                
+                # Check if the stripped text matches any of our special cases (more general)
                 for case, translation in special_cases.items():
-                    if original_text.upper() == case.upper() or original_text.upper().startswith(case.upper() + " "):
+                    if stripped_text.upper() == case.upper() or stripped_text.upper().startswith(case.upper() + " "):
                         print(f"DEBUG: Translated '{text}' → '{translation}' (special case)")
                         return translation
                     
