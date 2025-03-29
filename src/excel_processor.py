@@ -388,6 +388,14 @@ class ExcelProcessor:
                 'Trip': 'Déclenchement',
                 'Closed': 'Fermé',
                 'CLOSED': 'FERMÉ',
+                'Operated': 'Opéré',
+                'OPERATED': 'OPÉRÉ',
+                'Operated - Clearing': 'Opéré - Effacement',
+                'Operated - Clearing   ': 'Opéré - Effacement',
+                'OPERATED - CLEARING': 'OPÉRÉ - EFFACEMENT',
+                'Operated - App Ack': 'Opéré - App Ack',
+                'Operated - App Ack   ': 'Opéré - App Ack',
+                'OPERATED - APP ACK': 'OPÉRÉ - APP ACK',
                 'Healthy': 'En Bon État',
                 'HEALTHY': 'EN BON ÉTAT',
                 'Fail': 'Défaillance',
@@ -469,6 +477,9 @@ class ExcelProcessor:
                     "Fail - App Ack": "Défaillance - App Ack",
                     "Fail - Clearing": "Défaillance - Effacement",
                     "Faulty - Clearing": "Défectueux - Effacement",
+                    "Operated - Clearing": "Opéré - Effacement",
+                    "Operated - App Ack": "Opéré - App Ack",
+                    "Operated": "Opéré",
                     "Trip": "Déclenchement",
                     "Closed": "Fermé",
                     "On Sync": "En Synchronisation",
@@ -487,8 +498,11 @@ class ExcelProcessor:
                     "Fail - App Ack": "Défaillance - App Ack",
                     "Fail - Clearing": "Défaillance - Effacement",
                     "Faulty - Clearing": "Défectueux - Effacement",
+                    "Operated - Clearing": "Opéré - Effacement",
+                    "Operated - App Ack": "Opéré - App Ack",
                     "Set": "Réglé",
-                    "Reset": "Réinitialisé"
+                    "Reset": "Réinitialisé",
+                    "Operated": "Opéré"
                 }
                 
                 # Check for exact matches including spaces first (more specific)
