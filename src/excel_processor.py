@@ -439,7 +439,9 @@ class ExcelProcessor:
                 'OFF - App Ack': 'DÉSACTIVÉ - App Ack',
                 'OFF - App Ack   ': 'DÉSACTIVÉ - App Ack',
                 'Off - App Ack': 'Désactivé - App Ack',
-                'Off - App Ack   ': 'Désactivé - App Ack'
+                'Off - App Ack   ': 'Désactivé - App Ack',
+                'Alarm': 'Alarme',
+                'ALARM': 'ALARME'
             }
             
             def is_french(text):
@@ -495,6 +497,7 @@ class ExcelProcessor:
                     "On Sync": "En Synchronisation",
                     "Healthy": "En Bon État",
                     "Operational Mode": "Mode Opérationnel",
+                    "Alarm": "Alarme",
                     "Fail": "Défaillance",
                     "Faulty": "Défectueux",
                     "Off": "Désactivé"
@@ -518,7 +521,8 @@ class ExcelProcessor:
                     "Set": "Réglé",
                     "Reset": "Réinitialisé",
                     "Operated": "Opéré",
-                    "Off": "Désactivé"
+                    "Off": "Désactivé",
+                    "Alarm": "Alarme"
                 }
                 
                 # Check for exact matches including spaces first (more specific)
