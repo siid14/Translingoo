@@ -10,7 +10,7 @@ class ExcelTranslatorApp:
         self.processor = ExcelProcessor()
         
         # Configure the main window
-        self.root.geometry("600x400")
+        self.root.geometry("600x450")
         self.setup_ui()
 
     def setup_ui(self):
@@ -29,6 +29,25 @@ class ExcelTranslatorApp:
         self.output_path_var = tk.StringVar()
         tk.Entry(frame, textvariable=self.output_path_var, width=50).pack(fill='x', pady=(0, 10))
         tk.Button(frame, text="Browse", command=self.browse_output).pack(anchor='w')
+        
+        # Translation options
+        translation_frame = tk.LabelFrame(frame, text="Translation Options", padx=10, pady=10)
+        translation_frame.pack(fill='x', pady=15)
+        
+        # Checkboxes for column selection
+        self.translate_description_var = tk.BooleanVar(value=True)
+        tk.Checkbutton(
+            translation_frame, 
+            text="Translate 'Description' column", 
+            variable=self.translate_description_var
+        ).pack(anchor='w')
+        
+        self.translate_message_var = tk.BooleanVar(value=False)
+        tk.Checkbutton(
+            translation_frame, 
+            text="Translate 'Message' column", 
+            variable=self.translate_message_var
+        ).pack(anchor='w')
 
         # Process button
         tk.Button(frame, text="Process File", command=self.process_file).pack(pady=20)
@@ -62,6 +81,17 @@ class ExcelTranslatorApp:
         if not input_path or not output_path:
             messagebox.showerror("Error", "Please select both input and output files")
             return
+            
+        # Get translation options
+        columns_to_translate = []
+        if self.translate_description_var.get():
+            columns_to_translate.append("Description")
+        if self.translate_message_var.get():
+            columns_to_translate.append("Message")
+            
+        if not columns_to_translate:
+            messagebox.showerror("Error", "Please select at least one column to translate")
+            return
 
         self.status_var.set("Processing...")
         self.root.update()
@@ -71,7 +101,7 @@ class ExcelTranslatorApp:
             self.status_var.set("Error loading file")
             return
 
-        if not self.processor.process_file():
+        if not self.processor.process_file(columns_to_translate):
             self.status_var.set("Error processing file")
             return
 

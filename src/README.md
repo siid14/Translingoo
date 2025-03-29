@@ -73,7 +73,7 @@
 
 ```bash
 # Create a virtual environment
-python -m venv venv
+python3 -m venv venv
 
 # Activate virtual environment
 # On Windows:
@@ -89,7 +89,7 @@ pip install -r requirements.txt
 
 ```bash
 # Run the application
-python src/main.py
+python3 src/main.py
 ```
 
 ## Contributing

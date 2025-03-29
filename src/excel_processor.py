@@ -1,5 +1,6 @@
 import pandas as pd
 from pathlib import Path
+import re
 
 class ExcelProcessor:
     def __init__(self):
@@ -12,6 +13,56 @@ class ExcelProcessor:
             print(f"\nDEBUG: Attempting to load file: {file_path}")
             print(f"DEBUG: File exists: {Path(file_path).exists()}")
             
+            # Use pandas to read the Excel file directly
+            try:
+                print("DEBUG: Attempting to load with pandas directly")
+                # Try to read the file without header first to examine the structure
+                raw_df = pd.read_excel(file_path, engine='openpyxl', header=None)
+                print(f"DEBUG: Successfully loaded raw Excel file with pandas")
+                
+                # Determine the header row - usually the first row that contains "Description" or "Message"
+                header_row = None
+                for i in range(min(20, len(raw_df))):  # Check first 20 rows
+                    row_values = raw_df.iloc[i].astype(str)
+                    if "Description" in row_values.values or "Message" in row_values.values:
+                        header_row = i
+                        break
+                
+                # If header row found, read again with that as the header
+                if header_row is not None:
+                    print(f"DEBUG: Found header at row {header_row}")
+                    self.input_df = pd.read_excel(file_path, engine='openpyxl', header=header_row)
+                else:
+                    print("DEBUG: Using first row as header")
+                    self.input_df = pd.read_excel(file_path, engine='openpyxl')
+                
+                # Clean up column names - replace unnamed columns with meaningful names
+                renamed_columns = {}
+                for col in self.input_df.columns:
+                    if 'Unnamed' in str(col):
+                        # Skip renaming these columns as they're likely empty in the original file
+                        continue
+                
+                print(f"DEBUG: DataFrame shape: {self.input_df.shape}")
+                print(f"DEBUG: Columns: {self.input_df.columns.tolist()}")
+                
+                if len(self.input_df) > 0:
+                    print("\nDEBUG: File Content Preview:")
+                    print(self.input_df.head())
+                    return True
+                else:
+                    print("DEBUG: DataFrame is empty")
+                    # Try alternate approach with sheet_name
+                    self.input_df = pd.read_excel(file_path, engine='openpyxl', sheet_name=0)
+                    print(f"DEBUG: Loaded with sheet_name=0, shape: {self.input_df.shape}")
+                    print("\nDEBUG: File Content Preview:")
+                    print(self.input_df.head())
+                    return True
+            except Exception as e:
+                print(f"DEBUG: Error with pandas direct loading: {str(e)}")
+                print("DEBUG: Trying fallback method...")
+            
+            # Fallback to the zipfile method if pandas direct loading fails
             import zipfile
             import xml.etree.ElementTree as ET
             
@@ -72,11 +123,16 @@ class ExcelProcessor:
                             print(f"Row {len(data)}: {row_data}")
                     
                     # Create DataFrame
-                    self.input_df = pd.DataFrame(data[13:])  # Skip first 13 rows as before
+                    if not data:
+                        print("DEBUG: No data found in the Excel file")
+                        return False
+                        
+                    self.input_df = pd.DataFrame(data)
                     
                     # Set column names based on the first row
-                    self.input_df.columns = self.input_df.iloc[0]
-                    self.input_df = self.input_df[1:]  # Remove the header row
+                    if len(self.input_df) > 0:
+                        self.input_df.columns = self.input_df.iloc[0]
+                        self.input_df = self.input_df[1:]  # Remove the header row
                     
                     print("\nDEBUG: Successfully created DataFrame")
                     print("\nDEBUG: File Content Preview:")
@@ -93,21 +149,49 @@ class ExcelProcessor:
             print(f"- File path: {file_path}")
             return False
 
-    def process_file(self):
+    def process_file(self, columns_to_translate=None):
         """Process the loaded Excel file."""
         if self.input_df is None:
             print("DEBUG: input_df is None")
             return False
         
-        print("\nDEBUG: Starting file processing")
+        if columns_to_translate is None:
+            columns_to_translate = ["Description"]
+            
+        print(f"\nDEBUG: Starting file processing with columns to translate: {columns_to_translate}")
         
         # Create a copy of the input DataFrame
         self.output_df = self.input_df.copy()
         print(f"DEBUG: Created output DataFrame with {len(self.output_df)} rows")
         
-        # Ensure we have the Description column
-        if 'Description' not in self.output_df.columns:
-            print("DEBUG: 'Description' column not found")
+        # Check if the specified columns exist in the DataFrame
+        # First get a normalized list of available columns (removing Unnamed ones)
+        available_columns = [col for col in self.output_df.columns if 'Unnamed' not in str(col)]
+        print(f"DEBUG: Available columns for translation: {available_columns}")
+        
+        # Check for exact matches first
+        missing_columns = [col for col in columns_to_translate if col not in self.output_df.columns]
+        
+        # If there are missing columns, try case-insensitive matching
+        if missing_columns:
+            column_mapping = {}
+            lower_columns = {str(col).lower(): col for col in self.output_df.columns}
+            
+            for col in missing_columns[:]:  # Use a copy since we'll modify the list
+                if col.lower() in lower_columns:
+                    # Found a case-insensitive match
+                    actual_col = lower_columns[col.lower()]
+                    column_mapping[col] = actual_col
+                    missing_columns.remove(col)
+                    print(f"DEBUG: Found case-insensitive match for '{col}': '{actual_col}'")
+            
+            # Update columns_to_translate with the actual column names
+            columns_to_translate = [column_mapping.get(col, col) for col in columns_to_translate]
+        
+        # Check if any columns are still missing
+        missing_columns = [col for col in columns_to_translate if col not in self.output_df.columns]
+        if missing_columns:
+            print(f"DEBUG: Columns not found: {missing_columns}")
             print(f"DEBUG: Available columns: {self.output_df.columns.tolist()}")
             return False
             
@@ -244,6 +328,7 @@ class ExcelProcessor:
 
                 # New translations
                 'BAY MODE': 'MODE TRAVÉE',
+                'MODE TRAVEL': 'MODE TRAVÉE',
                 '+6R3 EFS B3 OPERATIONAL': '+6R3 EFS B3 EN SERVICE',
                 '+6R1 EFS B1 OPERATIONAL': '+6R1 EFS B1 EN SERVICE',
                 '+6R3 EFS B4 OPERATIONAL': '+6R3 EFS B4 EN SERVICE',
@@ -271,9 +356,93 @@ class ExcelProcessor:
                 '21 ZONE-3 START': '21 ZONE-3 DÉMARRAGE',
                 '21 ZONE-2 START': '21 ZONE-2 DÉMARRAGE',
                 '21 ZONE-2 PROTECTION OPTD': '21 ZONE-2 PROTECTION DÉCLENCHÉE',
+                
+                # Message column specific translations
+                'REMOTE': 'DISTANT',
+                'BAD STATE': 'MAUVAIS ÉTAT',
+                'OPEN': 'OUVERT',
+                'ON': 'ACTIVÉ',
+                'Set': 'Réglé',
+                'Set   ': 'Réglé',
+                'SET': 'RÉGLÉ',
+                'Reset': 'Réinitialisé',
+                'RESET': 'RÉINITIALISÉ',
+                'Reset - App Ack': 'Réinitialisé - App Ack',
+                'Reset - App Ack   ': 'Réinitialisé - App Ack',
+                'RESET - APP ACK': 'RÉINITIALISÉ - APP ACK',
+                'OPEN - App Ack': 'OUVERT - App Ack',
+                'OPEN - App Ack   ': 'OUVERT - App Ack',
+                'OPEN - Clearing': 'OUVERT - Effacement',
+                'OPEN - CLEARING': 'OUVERT - EFFACEMENT',
+                'Set - App Ack': 'Réglé - App Ack',
+                'Set - App Ack   ': 'Réglé - App Ack',
+                'SET - APP ACK': 'RÉGLÉ - APP ACK',
+                'Set - Clearing': 'Réglé - Effacement',
+                'Set - Clearing   ': 'Réglé - Effacement',
+                'SET - CLEARING': 'RÉGLÉ - EFFACEMENT',
+                'On Sync': 'En Synchronisation',
+                'ON SYNC': 'EN SYNCHRONISATION',
+                'TRIP - App Ack': 'DÉCLENCHEMENT - App Ack',
+                'TRIP - APP ACK': 'DÉCLENCHEMENT - APP ACK',
+                'TRIP': 'DÉCLENCHEMENT',
+                'Trip': 'Déclenchement',
+                'Closed': 'Fermé',
+                'CLOSED': 'FERMÉ',
+                'Operated': 'Opéré',
+                'OPERATED': 'OPÉRÉ',
+                'Operated - Clearing': 'Opéré - Effacement',
+                'Operated - Clearing   ': 'Opéré - Effacement',
+                'OPERATED - CLEARING': 'OPÉRÉ - EFFACEMENT',
+                'Operated - App Ack': 'Opéré - App Ack',
+                'Operated - App Ack   ': 'Opéré - App Ack',
+                'OPERATED - APP ACK': 'OPÉRÉ - APP ACK',
+                'Healthy': 'En Bon État',
+                'HEALTHY': 'EN BON ÉTAT',
+                'Fail': 'Défaillance',
+                'FAIL': 'DÉFAILLANCE',
+                'Faulty': 'Défectueux', 
+                'FAULTY': 'DÉFECTUEUX',
+                'Faulty - Clearing': 'Défectueux - Effacement',
+                'Faulty - Clearing   ': 'Défectueux - Effacement',
+                'FAULTY - CLEARING': 'DÉFECTUEUX - EFFACEMENT',
+                'Fail - Clearing': 'Défaillance - Effacement',
+                'Fail - Clearing   ': 'Défaillance - Effacement',
+                'FAIL - CLEARING': 'DÉFAILLANCE - EFFACEMENT',
+                'Fail - App Ack': 'Défaillance - App Ack',
+                'Fail - App Ack   ': 'Défaillance - App Ack',
+                'FAIL - APP ACK': 'DÉFAILLANCE - APP ACK',
+                'ABSENCE TENSION': 'ABSENCE DE TENSION',
+                'DEFAULT ALIM CG MCB1/MCB2 DECLENCHEE': 'DÉFAUT ALIM CG MCB1/MCB2 DÉCLENCHÉE',
+                'EFS-52 OPERATIONAL': 'EFS-52 OPÉRATIONNEL',
+                'EFS-SB2 OPERATIONAL': 'EFS-SB2 OPÉRATIONNEL',
+                'ABSENCE TENSION 125V CG2': 'ABSENCE DE TENSION 125V CG2',
+                'DISJONCTEUR QE1': 'DISJONCTEUR QE1',
+                'DISJONCTEUR QE2': 'DISJONCTEUR QE2',
+                'DISJONCTEUR QE3': 'DISJONCTEUR QE3',
+                
+                # From image
+                'DISJONCTEUR QR3': 'DISJONCTEUR QR3',
+                'DISJONCTEUR QR4': 'DISJONCTEUR QR4', 
+                'DISJONCTEUR QB1': 'DISJONCTEUR QB1',
+                'DISJONCTEUR QS1': 'DISJONCTEUR QS1',
+                'DISJONCTEUR QS2': 'DISJONCTEUR QS2',
+                'DISJONCTEUR QQ2': 'DISJONCTEUR QQ2',
+                'DISJONCTEUR QG1': 'DISJONCTEUR QG1',
+                'DISJONCTEUR QD1': 'DISJONCTEUR QD1',
+                'BAD STATE': 'MAUVAIS ÉTAT',
+                'EN SERVICE': 'EN SERVICE',
+                'OPÉRATIONNEL': 'OPÉRATIONNEL',
+                'Operational Mode': 'Mode Opérationnel',
+                'OPERATIONAL MODE': 'MODE OPÉRATIONNEL',
+                'OFF': 'DÉSACTIVÉ',
+                'Off': 'Désactivé',
+                'OFF - App Ack': 'DÉSACTIVÉ - App Ack',
+                'OFF - App Ack   ': 'DÉSACTIVÉ - App Ack',
+                'Off - App Ack': 'Désactivé - App Ack',
+                'Off - App Ack   ': 'Désactivé - App Ack',
+                'Alarm': 'Alarme',
+                'ALARM': 'ALARME'
             }
-            
-            print("\nDEBUG: Starting translation of Description column")
             
             def is_french(text):
                 """Check if text contains French-specific words/patterns"""
@@ -282,11 +451,11 @@ class ExcelProcessor:
                     'MARCHE', 'ARRET', 'ENTREE', 'INACTIVE', 'EXECUTION', 'COMMANDE',
                     'MANUELLE', 'PORTEUSE', 'ENTRANTE', 'SORTANTE', 'EQUIPEMENT',
                     'RELAIS', 'DEVERROUILLAGE', 'DEMARRAGE', 'ETAPE', 'ENVOI', 'CANAL',
-                    'PROTECTION', 'PHASE', 'ZONE'
+                    'PROTECTION', 'PHASE', 'ZONE', 'MAUVAIS', 'ÉTAT', 'OUVERT', 'ACTIVÉ'
                 ]
                 
                 english_indicators = [
-                    'OPERATING', 'MODE', 'HARMONIC', 'DETECTED', '2ND', 'BAY'
+                    'OPERATING', 'MODE', 'HARMONIC', 'DETECTED', '2ND', 'BAY', 'REMOTE', 'OPERATIONAL'
                 ]
                 
                 words = text.upper().split()
@@ -303,8 +472,73 @@ class ExcelProcessor:
             def translate_text(text):
                 if pd.isna(text) or text is None or str(text).strip() == '':
                     return text
+                
+                # Handle specific cases with trailing spaces
+                original_text = str(text)
+                stripped_text = original_text.strip()
+                
+                special_cases = {
+                    "Set - App Ack": "Réglé - App Ack",
+                    "Reset - App Ack": "Réinitialisé - App Ack",
+                    "TRIP - App Ack": "DÉCLENCHEMENT - App Ack",
+                    "OPEN - App Ack": "OUVERT - App Ack",
+                    "OPEN - Clearing": "OUVERT - Effacement",
+                    "Set - Clearing": "Réglé - Effacement",
+                    "Fail - App Ack": "Défaillance - App Ack",
+                    "Fail - Clearing": "Défaillance - Effacement",
+                    "Faulty - Clearing": "Défectueux - Effacement",
+                    "Operated - Clearing": "Opéré - Effacement",
+                    "Operated - App Ack": "Opéré - App Ack",
+                    "OFF - App Ack": "DÉSACTIVÉ - App Ack",
+                    "Off - App Ack": "Désactivé - App Ack",
+                    "Operated": "Opéré",
+                    "Trip": "Déclenchement",
+                    "Closed": "Fermé",
+                    "On Sync": "En Synchronisation",
+                    "Healthy": "En Bon État",
+                    "Operational Mode": "Mode Opérationnel",
+                    "Alarm": "Alarme",
+                    "Fail": "Défaillance",
+                    "Faulty": "Défectueux",
+                    "Off": "Désactivé"
+                }
+                
+                # Check common patterns with trailing spaces that cause issues
+                known_patterns = {
+                    "Set - App Ack": "Réglé - App Ack",
+                    "Reset - App Ack": "Réinitialisé - App Ack",
+                    "OPEN - App Ack": "OUVERT - App Ack",
+                    "OPEN - Clearing": "OUVERT - Effacement",
+                    "Set - Clearing": "Réglé - Effacement",
+                    "Fail - App Ack": "Défaillance - App Ack",
+                    "Fail - Clearing": "Défaillance - Effacement",
+                    "Faulty - Clearing": "Défectueux - Effacement",
+                    "Operated - Clearing": "Opéré - Effacement",
+                    "Operated - App Ack": "Opéré - App Ack",
+                    "OFF - App Ack": "DÉSACTIVÉ - App Ack",
+                    "Off - App Ack": "Désactivé - App Ack",
+                    "Operational Mode": "Mode Opérationnel",
+                    "Set": "Réglé",
+                    "Reset": "Réinitialisé",
+                    "Operated": "Opéré",
+                    "Off": "Désactivé",
+                    "Alarm": "Alarme"
+                }
+                
+                # Check for exact matches including spaces first (more specific)
+                for pattern, translation in known_patterns.items():
+                    # If the text starts with the pattern plus optional spaces, translate it
+                    if re.match(f"^{re.escape(pattern)}\\s*$", original_text, re.IGNORECASE):
+                        print(f"DEBUG: Translated '{text}' → '{translation}' (pattern with spaces)")
+                        return translation
+                
+                # Check if the stripped text matches any of our special cases (more general)
+                for case, translation in special_cases.items():
+                    if stripped_text.upper() == case.upper() or stripped_text.upper().startswith(case.upper() + " "):
+                        print(f"DEBUG: Translated '{text}' → '{translation}' (special case)")
+                        return translation
                     
-                # Normalize the text by removing extra spaces
+                # Normalize the text by removing extra spaces (both within and at the end)
                 text_str = ' '.join(str(text).strip().upper().split())
                 
                 # First check if the text is French
@@ -324,13 +558,47 @@ class ExcelProcessor:
                     translated = translations[original_upper]
                     print(f"DEBUG: Translated '{text}' → '{translated}'")
                     return translated
+                    
+                # Try with additional variations for handling whitespace
+                for key in translations:
+                    # Try matching ignoring extra spaces
+                    if ' '.join(text_str.split()) == ' '.join(key.split()):
+                        translated = translations[key]
+                        print(f"DEBUG: Translated '{text}' → '{translated}' (space-normalized)")
+                        return translated
                 
                 # If no translation found, return original
                 print(f"DEBUG: No translation found for '{text}', keeping original")
                 return text
             
-            # Apply translation
-            self.output_df['Description'] = self.output_df['Description'].apply(translate_text)
+            # Apply translation to each selected column
+            for column in columns_to_translate:
+                print(f"\nDEBUG: Starting translation of '{column}' column")
+                
+                # Create a new column for the translation
+                new_column_name = f"{column} Français"
+                
+                # Translate the column and add it next to the original column
+                translated_values = self.output_df[column].apply(translate_text)
+                
+                # Get the position of the current column
+                column_position = self.output_df.columns.get_loc(column)
+                
+                # Create a new DataFrame with all columns before the current one
+                columns_before = list(self.output_df.columns[:column_position + 1])
+                
+                # Create a list of all columns after the current one
+                columns_after = list(self.output_df.columns[column_position + 1:])
+                
+                # Reorganize the DataFrame
+                self.output_df = pd.concat([
+                    self.output_df[columns_before], 
+                    translated_values.rename(new_column_name),
+                    self.output_df[columns_after]
+                ], axis=1)
+                
+                print(f"DEBUG: Added new column '{new_column_name}'")
+            
             print("DEBUG: Translation completed")
             
             # Limit to 1050 rows if necessary
