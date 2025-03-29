@@ -472,7 +472,7 @@ class ExcelProcessor:
             def translate_text(text):
                 if pd.isna(text) or text is None or str(text).strip() == '':
                     return text
-                
+                    
                 # Handle specific cases with trailing spaces
                 original_text = str(text)
                 stripped_text = original_text.strip()
@@ -565,7 +565,7 @@ class ExcelProcessor:
                     if ' '.join(text_str.split()) == ' '.join(key.split()):
                         translated = translations[key]
                         print(f"DEBUG: Translated '{text}' → '{translated}' (space-normalized)")
-                        return translated
+                    return translated
                 
                 # If no translation found, return original
                 print(f"DEBUG: No translation found for '{text}', keeping original")
