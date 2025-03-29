@@ -433,7 +433,13 @@ class ExcelProcessor:
                 'EN SERVICE': 'EN SERVICE',
                 'OPÉRATIONNEL': 'OPÉRATIONNEL',
                 'Operational Mode': 'Mode Opérationnel',
-                'OPERATIONAL MODE': 'MODE OPÉRATIONNEL'
+                'OPERATIONAL MODE': 'MODE OPÉRATIONNEL',
+                'OFF': 'DÉSACTIVÉ',
+                'Off': 'Désactivé',
+                'OFF - App Ack': 'DÉSACTIVÉ - App Ack',
+                'OFF - App Ack   ': 'DÉSACTIVÉ - App Ack',
+                'Off - App Ack': 'Désactivé - App Ack',
+                'Off - App Ack   ': 'Désactivé - App Ack'
             }
             
             def is_french(text):
@@ -481,6 +487,8 @@ class ExcelProcessor:
                     "Faulty - Clearing": "Défectueux - Effacement",
                     "Operated - Clearing": "Opéré - Effacement",
                     "Operated - App Ack": "Opéré - App Ack",
+                    "OFF - App Ack": "DÉSACTIVÉ - App Ack",
+                    "Off - App Ack": "Désactivé - App Ack",
                     "Operated": "Opéré",
                     "Trip": "Déclenchement",
                     "Closed": "Fermé",
@@ -488,7 +496,8 @@ class ExcelProcessor:
                     "Healthy": "En Bon État",
                     "Operational Mode": "Mode Opérationnel",
                     "Fail": "Défaillance",
-                    "Faulty": "Défectueux"
+                    "Faulty": "Défectueux",
+                    "Off": "Désactivé"
                 }
                 
                 # Check common patterns with trailing spaces that cause issues
@@ -503,10 +512,13 @@ class ExcelProcessor:
                     "Faulty - Clearing": "Défectueux - Effacement",
                     "Operated - Clearing": "Opéré - Effacement",
                     "Operated - App Ack": "Opéré - App Ack",
+                    "OFF - App Ack": "DÉSACTIVÉ - App Ack",
+                    "Off - App Ack": "Désactivé - App Ack",
                     "Operational Mode": "Mode Opérationnel",
                     "Set": "Réglé",
                     "Reset": "Réinitialisé",
-                    "Operated": "Opéré"
+                    "Operated": "Opéré",
+                    "Off": "Désactivé"
                 }
                 
                 # Check for exact matches including spaces first (more specific)
