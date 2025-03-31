@@ -13,135 +13,153 @@ class ExcelProcessor:
             print(f"\nDEBUG: Attempting to load file: {file_path}")
             print(f"DEBUG: File exists: {Path(file_path).exists()}")
             
-            # Use pandas to read the Excel file directly
-            try:
-                print("DEBUG: Attempting to load with pandas directly")
-                # Try to read the file without header first to examine the structure
-                raw_df = pd.read_excel(file_path, engine='openpyxl', header=None)
-                print(f"DEBUG: Successfully loaded raw Excel file with pandas")
-                
-                # Determine the header row - usually the first row that contains "Description" or "Message"
-                header_row = None
-                for i in range(min(20, len(raw_df))):  # Check first 20 rows
-                    row_values = raw_df.iloc[i].astype(str)
-                    if "Description" in row_values.values or "Message" in row_values.values:
-                        header_row = i
-                        break
-                
-                # If header row found, read again with that as the header
-                if header_row is not None:
-                    print(f"DEBUG: Found header at row {header_row}")
-                    self.input_df = pd.read_excel(file_path, engine='openpyxl', header=header_row)
-                else:
-                    print("DEBUG: Using first row as header")
-                    self.input_df = pd.read_excel(file_path, engine='openpyxl')
-                
-                # Clean up column names - replace unnamed columns with meaningful names
-                renamed_columns = {}
-                for col in self.input_df.columns:
-                    if 'Unnamed' in str(col):
-                        # Skip renaming these columns as they're likely empty in the original file
-                        continue
-                
-                print(f"DEBUG: DataFrame shape: {self.input_df.shape}")
-                print(f"DEBUG: Columns: {self.input_df.columns.tolist()}")
-                
-                if len(self.input_df) > 0:
-                    print("\nDEBUG: File Content Preview:")
-                    print(self.input_df.head())
-                    return True
-                else:
-                    print("DEBUG: DataFrame is empty")
-                    # Try alternate approach with sheet_name
-                    self.input_df = pd.read_excel(file_path, engine='openpyxl', sheet_name=0)
-                    print(f"DEBUG: Loaded with sheet_name=0, shape: {self.input_df.shape}")
-                    print("\nDEBUG: File Content Preview:")
-                    print(self.input_df.head())
-                    return True
-            except Exception as e:
-                print(f"DEBUG: Error with pandas direct loading: {str(e)}")
-                print("DEBUG: Trying fallback method...")
+            # List of engines to try
+            engines = ['openpyxl', 'xlrd']
             
-            # Fallback to the zipfile method if pandas direct loading fails
-            import zipfile
-            import xml.etree.ElementTree as ET
-            
-            with zipfile.ZipFile(file_path) as zf:
-                # Define namespaces
-                namespaces = {
-                    'main': 'http://purl.oclc.org/ooxml/spreadsheetml/main',
-                    'r': 'http://purl.oclc.org/ooxml/officeDocument/relationships'
-                }
-                
-                # Read shared strings if they exist
-                shared_strings = []
-                if 'xl/sharedStrings.xml' in zf.namelist():
-                    with zf.open('xl/sharedStrings.xml') as f:
-                        strings_tree = ET.parse(f)
-                        strings_root = strings_tree.getroot()
-                        for si in strings_root.findall('.//{%s}t' % namespaces['main']):
-                            shared_strings.append(si.text)
-                    print(f"DEBUG: Loaded {len(shared_strings)} shared strings")
-                
-                # Read the worksheet
-                print("\nDEBUG: Reading sheet1.xml directly")
-                with zf.open('xl/worksheets/sheet1.xml') as f:
-                    sheet_tree = ET.parse(f)
-                    sheet_root = sheet_tree.getroot()
+            for engine in engines:
+                try:
+                    print(f"DEBUG: Attempting to load with engine: {engine}")
+                    # Try to read the file without header first to examine the structure
+                    raw_df = pd.read_excel(file_path, engine=engine, header=None)
+                    print(f"DEBUG: Successfully loaded raw Excel file with {engine}")
                     
-                    # Get all rows
-                    rows = sheet_root.findall('.//{%s}row' % namespaces['main'])
-                    print(f"Found {len(rows)} rows")
+                    # Find the actual header row by looking for key columns
+                    header_row = None
+                    for i in range(min(20, len(raw_df))):  # Check first 20 rows
+                        row_values = raw_df.iloc[i].astype(str)
+                        if any(col in row_values.values for col in ['Description', 'Message', 'Origin', 'Type']):
+                            header_row = i
+                            break
                     
-                    # Process rows into data
-                    data = []
-                    for row in rows:
-                        row_data = []
-                        cells = row.findall('{%s}c' % namespaces['main'])
-                        
-                        for cell in cells:
-                            # Get cell value
-                            v = cell.find('{%s}v' % namespaces['main'])
-                            t = cell.get('t')  # cell type
-                            
-                            if v is not None:
-                                value = v.text
-                                # If cell type is 's', it's a shared string
-                                if t == 's' and shared_strings:
-                                    try:
-                                        value = shared_strings[int(value)]
-                                    except (ValueError, IndexError):
-                                        pass
-                                row_data.append(value)
-                            else:
-                                row_data.append(None)
-                        
-                        data.append(row_data)
-                        
-                        # Print first few rows for debugging
-                        if len(data) <= 5:
-                            print(f"Row {len(data)}: {row_data}")
+                    # If header row found, read again with that as the header
+                    if header_row is not None:
+                        print(f"DEBUG: Found header at row {header_row}")
+                        self.input_df = pd.read_excel(file_path, engine=engine, header=header_row)
+                    else:
+                        print("DEBUG: Using first row as header")
+                        self.input_df = pd.read_excel(file_path, engine=engine)
                     
-                    # Create DataFrame
-                    if not data:
-                        print("DEBUG: No data found in the Excel file")
-                        return False
-                        
-                    self.input_df = pd.DataFrame(data)
+                    # Clean up column names
+                    self.input_df.columns = [str(col).strip() for col in self.input_df.columns]
                     
-                    # Set column names based on the first row
+                    print(f"DEBUG: DataFrame shape: {self.input_df.shape}")
+                    print(f"DEBUG: Columns: {self.input_df.columns.tolist()}")
+                    
                     if len(self.input_df) > 0:
-                        self.input_df.columns = self.input_df.iloc[0]
-                        self.input_df = self.input_df[1:]  # Remove the header row
+                        print("\nDEBUG: File Content Preview:")
+                        print(self.input_df.head())
+                        return True
                     
-                    print("\nDEBUG: Successfully created DataFrame")
-                    print("\nDEBUG: File Content Preview:")
-                    print(self.input_df.head())
-                    print(f"\nDEBUG: DataFrame shape: {self.input_df.shape}")
+                except Exception as e:
+                    print(f"DEBUG: Error with {engine}: {str(e)}")
+                    continue
+            
+            # Try salvaging the file when all engines fail
+            print("DEBUG: All engines failed, trying direct CSV conversion...")
+            
+            # New fallback method: Try using a temporary conversion to CSV
+            import tempfile
+            import subprocess
+            import os
+            import csv
+            
+            # Create temporary CSV file
+            temp_dir = tempfile.mkdtemp()
+            temp_csv = os.path.join(temp_dir, "temp_excel.csv")
+            
+            # Use pandas direct read with errors='ignore'
+            try:
+                print("DEBUG: Attempting to read with pandas errors='ignore'")
+                self.input_df = pd.read_excel(file_path, engine='openpyxl', header=None, errors='ignore')
+                if len(self.input_df) > 0:
+                    print("DEBUG: Successfully read with errors='ignore' option")
+                    
+                    # Find the header row by using keyword matching
+                    header_row = None
+                    for i in range(min(30, len(self.input_df))):  # Check more rows just in case
+                        row_str = ' '.join(self.input_df.iloc[i].astype(str).values)
+                        if 'Description' in row_str and ('Message' in row_str or 'Type' in row_str):
+                            header_row = i
+                            break
+                    
+                    # If header row found, use it as the header
+                    if header_row is not None:
+                        print(f"DEBUG: Found header at row {header_row}")
+                        self.input_df.columns = self.input_df.iloc[header_row]
+                        self.input_df = self.input_df.iloc[header_row + 1:]
+                    
+                    # Clean up column names
+                    self.input_df.columns = [str(col).strip() for col in self.input_df.columns]
+                    
+                    print(f"DEBUG: DataFrame shape: {self.input_df.shape}")
                     print(f"DEBUG: Columns: {self.input_df.columns.tolist()}")
                     
                     return True
+            except Exception as e:
+                print(f"DEBUG: Error with pandas errors='ignore': {str(e)}")
+            
+            # Try a manual parsing approach
+            print("DEBUG: Trying manual parsing approach...")
+            try:
+                # Create a manually parsed dataframe
+                import openpyxl
+                from openpyxl.utils.exceptions import InvalidFileException
                 
+                try:
+                    # Try a more lenient approach with openpyxl
+                    wb = openpyxl.load_workbook(file_path, data_only=True, keep_links=False, read_only=True)
+                    print(f"DEBUG: Available worksheets: {wb.sheetnames}")
+                    
+                    if wb.sheetnames:
+                        ws = wb[wb.sheetnames[0]]
+                        
+                        # Extract data from worksheet
+                        data = []
+                        for row in ws.rows:
+                            row_data = [cell.value for cell in row]
+                            data.append(row_data)
+                        
+                        if data:
+                            # Find the header row
+                            header_row = None
+                            for i, row in enumerate(data[:30]):  # Check first 30 rows
+                                row_str = ' '.join([str(cell) for cell in row if cell])
+                                if row_str and ('Description' in row_str) and ('Message' in row_str or 'Type' in row_str):
+                                    header_row = i
+                                    break
+                            
+                            # Create the DataFrame
+                            if header_row is not None:
+                                self.input_df = pd.DataFrame(data[header_row+1:], columns=data[header_row])
+                            else:
+                                self.input_df = pd.DataFrame(data[1:], columns=data[0])
+                            
+                            # Clean up column names
+                            self.input_df.columns = [str(col).strip() if col else f"Column_{i}" for i, col in enumerate(self.input_df.columns)]
+                            
+                            # Drop empty columns
+                            self.input_df = self.input_df.loc[:, ~self.input_df.columns.str.contains('^Column_')]
+                            
+                            print(f"DEBUG: Successfully created DataFrame with shape: {self.input_df.shape}")
+                            print(f"DEBUG: Columns: {self.input_df.columns.tolist()}")
+                            
+                            if len(self.input_df) > 0:
+                                print("\nDEBUG: File Content Preview:")
+                                print(self.input_df.head())
+                                return True
+                except InvalidFileException:
+                    print("DEBUG: InvalidFileException with openpyxl")
+                except Exception as e:
+                    print(f"DEBUG: Error with openpyxl manual parsing: {str(e)}")
+            
+            except Exception as e:
+                print(f"DEBUG: Error with manual parsing: {str(e)}")
+            
+            # If all else fails
+            print("DEBUG: All methods failed. Recommending to repair the file.")
+            print("DEBUG: Try opening and saving the file with Microsoft Excel, Google Sheets, or LibreOffice Calc.")
+            return False
+            
         except Exception as e:
             print(f"\nDEBUG: Error details:")
             print(f"- Error type: {type(e).__name__}")
@@ -206,6 +224,24 @@ class ExcelProcessor:
                 'LIVE INCOMING LIVE RUNNING': 'ENTRÉE SOUS TENSION, FONCTIONNEMENT SOUS TENSION',   # Fixed spacing
                 'LIVE INCOMING  LIVE RUNNING': 'ENTRÉE SOUS TENSION, FONCTIONNEMENT SOUS TENSION',  # Extra space variant
                 'CLOSE PERMISSIVE': 'AUTORISATION DE FERMETURE',
+                
+                # Adding basic translations for Message column values
+                'Set': 'Réglé',
+                'Set - App Ack': 'Réglé - App Ack',
+                'SET': 'RÉGLÉ',
+                'SET - APP ACK': 'RÉGLÉ - APP ACK',
+                'Reset': 'Réinitialiser',
+                'Reset - App Ack': 'Réinitialiser - App Ack',
+                'RESET': 'RÉINITIALISER',
+                'RESET - APP ACK': 'RÉINITIALISER - APP ACK',
+                'Operational': 'Opérationnel',
+                'OPERATIONAL': 'OPÉRATIONNEL',
+                'Alarm': 'Alarme',
+                'ALARM': 'ALARME',
+                'Normal': 'Normal',
+                'NORMAL': 'NORMAL',
+                'Operated': 'Opéré',
+                'OPERATED': 'OPÉRÉ',
                 
                 # New translations
                 'PRESENE OF REFERENCE VOLTAGE': 'PRÉSENCE DE TENSION DE RÉFÉRENCE',
@@ -565,7 +601,7 @@ class ExcelProcessor:
                     if ' '.join(text_str.split()) == ' '.join(key.split()):
                         translated = translations[key]
                         print(f"DEBUG: Translated '{text}' → '{translated}' (space-normalized)")
-                    return translated
+                        return translated
                 
                 # If no translation found, return original
                 print(f"DEBUG: No translation found for '{text}', keeping original")
