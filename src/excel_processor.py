@@ -17,40 +17,40 @@ class ExcelProcessor:
             engines = ['openpyxl', 'xlrd']
             
             for engine in engines:
-                try:
+            try:
                     print(f"DEBUG: Attempting to load with engine: {engine}")
-                    # Try to read the file without header first to examine the structure
+                # Try to read the file without header first to examine the structure
                     raw_df = pd.read_excel(file_path, engine=engine, header=None)
                     print(f"DEBUG: Successfully loaded raw Excel file with {engine}")
-                    
+                
                     # Find the actual header row by looking for key columns
-                    header_row = None
-                    for i in range(min(20, len(raw_df))):  # Check first 20 rows
-                        row_values = raw_df.iloc[i].astype(str)
+                header_row = None
+                for i in range(min(20, len(raw_df))):  # Check first 20 rows
+                    row_values = raw_df.iloc[i].astype(str)
                         if any(col in row_values.values for col in ['Description', 'Message', 'Origin', 'Type']):
-                            header_row = i
-                            break
-                    
-                    # If header row found, read again with that as the header
-                    if header_row is not None:
-                        print(f"DEBUG: Found header at row {header_row}")
+                        header_row = i
+                        break
+                
+                # If header row found, read again with that as the header
+                if header_row is not None:
+                    print(f"DEBUG: Found header at row {header_row}")
                         self.input_df = pd.read_excel(file_path, engine=engine, header=header_row)
-                    else:
-                        print("DEBUG: Using first row as header")
+                else:
+                    print("DEBUG: Using first row as header")
                         self.input_df = pd.read_excel(file_path, engine=engine)
                     
                     # Clean up column names
                     self.input_df.columns = [str(col).strip() for col in self.input_df.columns]
+                
+                print(f"DEBUG: DataFrame shape: {self.input_df.shape}")
+                print(f"DEBUG: Columns: {self.input_df.columns.tolist()}")
+                
+                if len(self.input_df) > 0:
+                    print("\nDEBUG: File Content Preview:")
+                    print(self.input_df.head())
+                    return True
                     
-                    print(f"DEBUG: DataFrame shape: {self.input_df.shape}")
-                    print(f"DEBUG: Columns: {self.input_df.columns.tolist()}")
-                    
-                    if len(self.input_df) > 0:
-                        print("\nDEBUG: File Content Preview:")
-                        print(self.input_df.head())
-                        return True
-                    
-                except Exception as e:
+            except Exception as e:
                     print(f"DEBUG: Error with {engine}: {str(e)}")
                     continue
             
@@ -159,7 +159,7 @@ class ExcelProcessor:
             print("DEBUG: All methods failed. Recommending to repair the file.")
             print("DEBUG: Try opening and saving the file with Microsoft Excel, Google Sheets, or LibreOffice Calc.")
             return False
-            
+                
         except Exception as e:
             print(f"\nDEBUG: Error details:")
             print(f"- Error type: {type(e).__name__}")
@@ -601,7 +601,7 @@ class ExcelProcessor:
                     if ' '.join(text_str.split()) == ' '.join(key.split()):
                         translated = translations[key]
                         print(f"DEBUG: Translated '{text}' → '{translated}' (space-normalized)")
-                        return translated
+                    return translated
                 
                 # If no translation found, return original
                 print(f"DEBUG: No translation found for '{text}', keeping original")
