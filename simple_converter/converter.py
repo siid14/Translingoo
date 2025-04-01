@@ -8,6 +8,11 @@ import os
 import sys
 import argparse
 import re
+import warnings
+
+# Suppress warnings
+warnings.filterwarnings('ignore', category=UserWarning, module='openpyxl')
+warnings.filterwarnings('ignore', category=UserWarning, module='pandas')
 
 def convert_and_process(input_file, output_file=None, columns_to_translate=None):
     """Convert an Excel file and apply translations."""
@@ -228,10 +233,29 @@ def main():
     parser.add_argument('input_file', help='Path to the input Excel file (.xls or .xlsx)')
     parser.add_argument('-o', '--output', help='Path to the output Excel file (default: input_name_translated.xlsx)')
     parser.add_argument('-c', '--columns', nargs='+', help='Columns to translate (default: Description Message)')
+    parser.add_argument('--skip-description', action='store_true', help='Skip translating the Description column')
+    parser.add_argument('--skip-message', action='store_true', help='Skip translating the Message column')
     
     args = parser.parse_args()
     
-    success = convert_and_process(args.input_file, args.output, args.columns)
+    # Handle column selection based on skip arguments
+    columns_to_translate = args.columns
+    
+    if columns_to_translate is None:
+        columns_to_translate = []
+        if not args.skip_description:
+            columns_to_translate.append("Description")
+        if not args.skip_message:
+            columns_to_translate.append("Message")
+        
+        # If both columns are skipped, use an empty list which will result in an error
+        if not columns_to_translate:
+            print("Error: Cannot skip all translation columns. At least one column must be translated.")
+            sys.exit(1)
+    
+    print(f"Columns to translate: {', '.join(columns_to_translate)}")
+    
+    success = convert_and_process(args.input_file, args.output, columns_to_translate)
     
     if success:
         print("Processing completed successfully.")

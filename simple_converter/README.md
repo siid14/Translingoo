@@ -10,6 +10,7 @@ A simple, standalone tool for translating Excel files with technical terms from 
 - Translates Description and Message columns
 - Docker-based for consistent operation across all systems
 - No installation of Python or dependencies needed
+- Available as both command-line and graphical user interface
 
 ## Prerequisites
 
@@ -17,7 +18,16 @@ The only requirement is Docker. You can download it from [https://docs.docker.co
 
 ## How to Use
 
-### On macOS/Linux:
+### GUI Application (Recommended for non-technical users)
+
+1. Download and run the "Excel Translator" application
+2. Click "Browse" to select your Excel file
+3. Click "Translate File" to start the translation process
+4. The translated file will be saved next to the original with "\_translated" added to the name
+
+### Command Line (For Advanced Users)
+
+#### On macOS/Linux:
 
 1. Download this folder
 2. Open Terminal and navigate to this folder
@@ -25,7 +35,7 @@ The only requirement is Docker. You can download it from [https://docs.docker.co
 4. Run the translator: `./run.sh /path/to/your/excelfile.xls`
 5. The translated file will be saved next to the original with "\_translated" added to the name
 
-### On Windows:
+#### On Windows:
 
 1. Download this folder
 2. Open Command Prompt and navigate to this folder
@@ -61,6 +71,16 @@ If you encounter issues:
 1. **Make sure Docker is running** - The whale icon should be visible in your taskbar/menu bar
 2. **Check file permissions** - Ensure you have permission to read the input file and write to the output location
 3. **Verify file format** - The file should be an Excel file (.xls or .xlsx) with Description or Message columns
+
+## Building the GUI Application (For IT Staff)
+
+If you need to build the GUI application from source:
+
+1. Ensure Python 3.8 or higher is installed
+2. Navigate to this folder in a terminal/command prompt
+3. On Windows: Run `build_gui_windows.bat`
+4. On macOS: Run `chmod +x build_gui_mac.sh` then `./build_gui_mac.sh`
+5. The executable will be created in the "dist" folder
 
 ## Support
 

@@ -1,0 +1,2 @@
+tkinter
+pyinstaller>=5.8.0 
