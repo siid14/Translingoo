@@ -1,0 +1,58 @@
+/* Custom styles for Translingoo */
+body {
+  background-color: #f8f9fa;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+h1 {
+  color: #0a58ca;
+}
+
+.container {
+  max-width: 1200px;
+}
+
+.card {
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border: none;
+}
+
+.card-header {
+  background-color: #f8f9fa;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.125);
+}
+
+.btn-primary {
+  background-color: #0d6efd;
+  border-color: #0d6efd;
+}
+
+.btn-primary:hover {
+  background-color: #0b5ed7;
+  border-color: #0a58ca;
+}
+
+footer {
+  color: #6c757d;
+}
+
+/* Processing spinner */
+.processing-spinner {
+  display: none;
+  margin: 20px auto;
+}
+
+/* Additional space for file input */
+input[type="file"] {
+  padding: 8px;
+}
+
+/* Ensure form elements have good spacing */
+.form-check {
+  padding-left: 1.8rem;
+}
+
+/* Fix for Bootstrap icon padding */
+.bi {
+  vertical-align: -0.125em;
+}
