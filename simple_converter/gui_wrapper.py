@@ -5,6 +5,7 @@ import tkinter as tk
 from tkinter import filedialog, messagebox, ttk
 import threading
 import platform
+import pandas as pd
 
 class TranslatorApp:
     def __init__(self, root):
@@ -657,8 +658,19 @@ CMD ["python", "/app/converter.py"]
                         for col in columns_to_translate:
                             if col in df.columns:
                                 self.log(f"Translating column: {col}")
-                                # Create a new column with the translated content
-                                df[f"{col} Français"] = df[col].apply(translate_text)
+                                # Get the column index to insert after
+                                col_idx = df.columns.get_loc(col)
+                                # Create translation
+                                translated_series = df[col].apply(translate_text)
+                                # Create a new DataFrame with all columns up to and including the current column
+                                new_df = df.iloc[:, 0:col_idx+1]
+                                # Add the translated column
+                                new_df[f"{col} Français"] = translated_series
+                                # Add the remaining columns
+                                if col_idx < len(df.columns) - 1:
+                                    new_df = pd.concat([new_df, df.iloc[:, col_idx+1:]], axis=1)
+                                # Replace the original DataFrame
+                                df = new_df
                                 columns_translated = True
                         
                         if not columns_translated:
@@ -670,7 +682,20 @@ CMD ["python", "/app/converter.py"]
                                     idx = df_columns_lower.index(col.lower())
                                     actual_col = df.columns[idx]
                                     self.log(f"Found column '{actual_col}' that matches '{col}'")
-                                    df[f"{actual_col} Français"] = df[actual_col].apply(translate_text)
+                                    
+                                    # Get the column index to insert after
+                                    col_idx = list(df.columns).index(actual_col)
+                                    # Create translation
+                                    translated_series = df[actual_col].apply(translate_text)
+                                    # Create a new DataFrame with all columns up to and including the current column
+                                    new_df = df.iloc[:, 0:col_idx+1]
+                                    # Add the translated column
+                                    new_df[f"{actual_col} Français"] = translated_series
+                                    # Add the remaining columns
+                                    if col_idx < len(df.columns) - 1:
+                                        new_df = pd.concat([new_df, df.iloc[:, col_idx+1:]], axis=1)
+                                    # Replace the original DataFrame
+                                    df = new_df
                                     columns_translated = True
                         
                         if not columns_translated:
