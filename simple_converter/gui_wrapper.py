@@ -575,32 +575,108 @@ CMD ["python", "/app/converter.py"]
                         self.log(f"Reading Excel file: {input_file}")
                         df = pd.read_excel(input_file)
                         
-                        # Basic translation dictionary
+                        # More comprehensive translation dictionary with terms from your Excel file
                         translations = {
+                            # Technical status values from your Excel file
+                            "BAD STATE": "MAUVAIS ETAT",
+                            "REMOTE": "DISTANT",
+                            "OPEN": "OUVERT",
+                            "ON": "ACTIF",
+                            "SET": "RÉGLÉ",
+                            "RESET": "RÉINITIALISÉ",
+                            "SET - APP ACK": "RÉGLÉ - APP ACK",
+                            "RESET - APP ACK": "RÉINITIALISÉ - APP ACK",
+                            "OPEN - APP ACK": "OUVERT - APP ACK",
+                            
+                            # Common technical terms
                             "error": "erreur",
                             "warning": "avertissement",
                             "info": "info",
                             "debug": "débogage",
                             "critical": "critique",
-                            "alert": "alerte"
-                            # Add more translations as needed
+                            "alert": "alerte",
+                            "emergency": "urgence",
+                            "notice": "avis",
+                            "log": "journal",
+                            "trace": "trace",
+                            "status": "statut",
+                            "update": "mise à jour",
+                            "configuration": "configuration",
+                            "processing": "traitement",
+                            "output": "sortie",
+                            "input": "entrée",
+                            "message": "message",
+                            "system": "système",
+                            "network": "réseau",
+                            "connection": "connexion",
+                            "disconnect": "déconnecter",
+                            "reconnect": "reconnecter",
+                            "failure": "échec",
+                            "success": "succès",
+                            "retry": "réessayer",
+                            "abort": "abandonner",
+                            "timeout": "délai d'attente"
                         }
                         
-                        # Define a simple translation function
-                        def translate_cell(text):
+                        # Define a better translation function that preserves case
+                        def translate_text(text):
                             if not isinstance(text, str):
                                 return text
                             
+                            translated = text
+                            
+                            # Convert to lowercase for matching but preserve case for replacement
+                            text_lower = text.lower()
+                            
+                            # Find all words in the dictionary that appear in the text
                             for eng, fr in translations.items():
-                                if eng.lower() in text.lower():
-                                    text = text.replace(eng, fr)
-                            return text
+                                # Create word boundary pattern for the English term
+                                eng_lower = eng.lower()
+                                if eng_lower in text_lower:
+                                    # Find start position of the term in the original text
+                                    start_pos = text_lower.find(eng_lower)
+                                    
+                                    # Get the original casing from the input text
+                                    original_cased = text[start_pos:start_pos+len(eng)]
+                                    
+                                    # Apply same casing to the French translation
+                                    if original_cased.isupper():
+                                        replacement = fr.upper()
+                                    elif original_cased[0].isupper():
+                                        replacement = fr.capitalize()
+                                    else:
+                                        replacement = fr
+                                    
+                                    # Replace in the text
+                                    translated = translated.replace(original_cased, replacement)
+                            
+                            return translated
                         
-                        # Apply translations to selected columns
+                        # Apply translations to selected columns by creating NEW columns
+                        columns_translated = False
                         for col in columns_to_translate:
                             if col in df.columns:
                                 self.log(f"Translating column: {col}")
-                                df[col] = df[col].apply(translate_cell)
+                                # Create a new column with the translated content
+                                df[f"{col} Français"] = df[col].apply(translate_text)
+                                columns_translated = True
+                        
+                        if not columns_translated:
+                            self.log("⚠️ Warning: None of the selected columns were found in the file.")
+                            # Look for columns that might match by different case
+                            df_columns_lower = [c.lower() for c in df.columns]
+                            for col in columns_to_translate:
+                                if col.lower() in df_columns_lower:
+                                    idx = df_columns_lower.index(col.lower())
+                                    actual_col = df.columns[idx]
+                                    self.log(f"Found column '{actual_col}' that matches '{col}'")
+                                    df[f"{actual_col} Français"] = df[actual_col].apply(translate_text)
+                                    columns_translated = True
+                        
+                        if not columns_translated:
+                            self.log("❌ Error: No columns could be translated.")
+                            messagebox.showerror("Error", "No matching columns found for translation.")
+                            return
                         
                         # Save the translated file
                         output_path = output_file or os.path.join(
@@ -609,7 +685,7 @@ CMD ["python", "/app/converter.py"]
                         )
                         
                         df.to_excel(output_path, index=False)
-                        self.log(f"Saved translated file to: {output_path}")
+                        self.log(f"✅ Saved translated file to: {output_path}")
                         
                         # Show success message
                         messagebox.showinfo("Success", "Translation completed successfully!")
