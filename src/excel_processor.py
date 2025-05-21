@@ -17,40 +17,40 @@ class ExcelProcessor:
             engines = ['openpyxl', 'xlrd']
             
             for engine in engines:
-            try:
+                try:
                     print(f"DEBUG: Attempting to load with engine: {engine}")
-                # Try to read the file without header first to examine the structure
+                    # Try to read the file without header first to examine the structure
                     raw_df = pd.read_excel(file_path, engine=engine, header=None)
                     print(f"DEBUG: Successfully loaded raw Excel file with {engine}")
                 
                     # Find the actual header row by looking for key columns
-                header_row = None
-                for i in range(min(20, len(raw_df))):  # Check first 20 rows
-                    row_values = raw_df.iloc[i].astype(str)
+                    header_row = None
+                    for i in range(min(20, len(raw_df))):  # Check first 20 rows
+                        row_values = raw_df.iloc[i].astype(str)
                         if any(col in row_values.values for col in ['Description', 'Message', 'Origin', 'Type']):
-                        header_row = i
-                        break
+                            header_row = i
+                            break
                 
-                # If header row found, read again with that as the header
-                if header_row is not None:
-                    print(f"DEBUG: Found header at row {header_row}")
+                    # If header row found, read again with that as the header
+                    if header_row is not None:
+                        print(f"DEBUG: Found header at row {header_row}")
                         self.input_df = pd.read_excel(file_path, engine=engine, header=header_row)
-                else:
-                    print("DEBUG: Using first row as header")
+                    else:
+                        print("DEBUG: Using first row as header")
                         self.input_df = pd.read_excel(file_path, engine=engine)
                     
                     # Clean up column names
                     self.input_df.columns = [str(col).strip() for col in self.input_df.columns]
                 
-                print(f"DEBUG: DataFrame shape: {self.input_df.shape}")
-                print(f"DEBUG: Columns: {self.input_df.columns.tolist()}")
+                    print(f"DEBUG: DataFrame shape: {self.input_df.shape}")
+                    print(f"DEBUG: Columns: {self.input_df.columns.tolist()}")
                 
-                if len(self.input_df) > 0:
-                    print("\nDEBUG: File Content Preview:")
-                    print(self.input_df.head())
-                    return True
-                    
-            except Exception as e:
+                    if len(self.input_df) > 0:
+                        print("\nDEBUG: File Content Preview:")
+                        print(self.input_df.head())
+                        return True
+                
+                except Exception as e:
                     print(f"DEBUG: Error with {engine}: {str(e)}")
                     continue
             
@@ -62,10 +62,6 @@ class ExcelProcessor:
             import subprocess
             import os
             import csv
-            
-            # Create temporary CSV file
-            temp_dir = tempfile.mkdtemp()
-            temp_csv = os.path.join(temp_dir, "temp_excel.csv")
             
             # Use pandas direct read with errors='ignore'
             try:

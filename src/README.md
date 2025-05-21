@@ -88,9 +88,11 @@ pip install -r requirements.txt
 ## Usage
 
 ```bash
-# Run the application
+# Run the application from the project root directory (Translingoo)
 python3 src/main.py
 ```
+
+**Note:** Make sure to run this command from the project root directory, not from inside the src directory.
 
 ## Contributing
 
