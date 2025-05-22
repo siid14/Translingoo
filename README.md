@@ -65,3 +65,71 @@ If you encounter issues:
 ## Support
 
 For any issues, please contact technical support.
+
+# Translingoo
+
+Excel to Excel translation tool. Specifically designed for translating technical documentation containing "Description" and "Message" columns from English to French.
+
+## Features
+
+- Simple desktop GUI and web interface options
+- Translates Excel files with "Description" and "Message" columns
+- Outputs a translated Excel file with additional French translation columns
+- Built-in dictionary of technical terms
+
+## Handling Different Document Types
+
+### Current Functionality
+
+The application currently supports:
+
+- Excel files (.xls and .xlsx) with clearly defined "Description" and "Message" columns
+- Translation of specific columns from English to French
+- Outputs a new Excel file with the original columns plus new translation columns
+
+### Options for PDF Technical Documents
+
+#### Option 1: Modify Current Project
+
+This approach involves extending the current application:
+
+1. Add PDF parsing capability using libraries like PyPDF2 or pdfplumber
+2. Implement layout detection to identify tables and text content
+3. Extract content for translation while preserving structure
+4. Add technical vocabulary for engineering/electrical terms
+5. Modify the UI to support PDF input and output options
+
+**Pros:**
+
+- Single application for all translation needs
+- Leverage existing translation dictionary
+
+**Cons:**
+
+- Complex implementation to handle different document structures
+- Challenging to maintain PDF layout in output
+- May require significant UI changes
+
+#### Option 2: Create a Separate Project
+
+This approach involves creating a dedicated solution for PDF documents:
+
+1. Build a specialized PDF processing pipeline
+2. Focus on technical document translation with appropriate domain vocabulary
+3. Implement structure-preserving output generation
+4. Design a UI specifically for the PDF workflow
+
+**Pros:**
+
+- Purpose-built solution for complex documents
+- Better handling of document structure
+- Simpler user experience for each document type
+
+**Cons:**
+
+- Requires maintaining two separate applications
+- Duplicate code for translation functionality
+
+## Recommendation
+
+For complex technical documents like the 63kV Buscoupler Protection specification, **Option 2 (separate project)** is likely the better approach. The structure and content of technical PDFs are significantly different from simple Excel files with defined columns, requiring specialized processing and a broader technical vocabulary.

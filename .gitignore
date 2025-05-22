@@ -1,5 +1,7 @@
 # Python virtual environment
 venv/
+venv_pdf/
+**/venv*/
 
 # Python cache files
 __pycache__/
@@ -27,5 +29,18 @@ data/output/*
 !data/input/.gitkeep
 !data/output/.gitkeep
 
+# PDF Translator specific
+pdf_uploads/
+pdf_downloads/
+*.pdf
+*.xlsx
+*.csv
+*.docx
+
 # Environment variables
 .env 
+
+# Local runtime files
+*.log
+*.lock
+*.tmp 

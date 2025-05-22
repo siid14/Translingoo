@@ -1,0 +1,56 @@
+/* Translingoo PDF Translator Styles */
+
+body {
+  background-color: #212529;
+  color: #fff;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.card {
+  background-color: #343a40;
+  color: #fff;
+  border: none;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.card-header {
+  background-color: #495057;
+  color: #fff;
+  font-weight: bold;
+}
+
+.btn-primary {
+  background-color: #0d6efd;
+  border-color: #0d6efd;
+}
+
+.btn-success {
+  background-color: #198754;
+  border-color: #198754;
+}
+
+.form-control {
+  background-color: #495057;
+  color: #fff;
+  border-color: #6c757d;
+}
+
+.form-control:focus {
+  background-color: #495057;
+  color: #fff;
+}
+
+.form-check-input {
+  background-color: #495057;
+  border-color: #6c757d;
+}
+
+.form-check-input:checked {
+  background-color: #0d6efd;
+  border-color: #0d6efd;
+}
+
+.alert {
+  margin-bottom: 20px;
+}
