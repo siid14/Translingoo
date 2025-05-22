@@ -118,6 +118,8 @@ A specialized tool for translating technical PDF documents from English to Frenc
 
 ### On macOS/Linux:
 
+within src directory
+
 1. Make sure Python 3.8+ is installed: `python --version`
 2. Make the run script executable: `chmod +x run_pdf_translator.sh`
 3. Run the application: `./run_pdf_translator.sh`
