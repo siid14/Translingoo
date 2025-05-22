@@ -428,6 +428,18 @@ class PDFTranslator:
             "Operate time delay (IN2>2 Time Delay)": "Temporisation de fonctionnement (Temporisation IN2>2)",
             "tIN2>1": "tIN2>1",
             
+            # Additional technical abbreviations and terms
+            "IFLC (HV)-Iref(p)": "IFLC (HT)-Iref(p)",
+            "IFLC (HV)-Iref(s)": "IFLC (HT)-Iref(s)",
+            "Kamp (HV)": "Kamp (HT)",
+            "Iacc (HV)-PU": "Iacc (HT)-PU",
+            "IFLC (LV)-Iref(p)": "IFLC (BT)-Iref(p)",
+            "IFLC (LV)-Iref(s)": "IFLC (BT)-Iref(s)",
+            "Kamp (LV)": "Kamp (BT)",
+            "Iacc (LV)": "Iacc (BT)",
+            "The Transformer Differential Protection Relais MiCOM P643- 87T has the following parameters for": "Le relais de protection différentielle de transformateur MiCOM P643-87T a les paramètres suivants pour",
+            "Grounded": "Mis à la terre",
+            
             # Units
             "kV": "kV",
             "A": "A",
