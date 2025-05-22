@@ -110,8 +110,8 @@ class PDFTranslator:
             "EF1- TOC (IN>1) Non Directional Earth fault: 51N": "EF1- TOC (IN>1) Défaut à la terre non directionnel: 51N",
             "IN>1 Function": "Fonction IN>1",
             "IN>1 Direction": "Direction IN>1",
-            "Stage 1 Earth fault pickup in primary": "Pickup de défaut à la terre étape 1 au primaire",
-            "Stage 1 Earth fault pickup in secondary (IN1>1 Current)": "Pickup de défaut à la terre étape 1 au secondaire (Courant IN1>1)",
+            "Stage 1 Earth fault pickup in primary": "Seuil de déclenchement défaut à la terre étage 1 au primaire",
+            "Stage 1 Earth fault pickup in secondary (IN1>1 Current)": "Seuil de déclenchement défaut à la terre étage 1 au secondaire (Courant IN1>1)",
             "Tripping characteristic for IN>1": "Caractéristique de déclenchement pour IN>1",
             "Curve type (IN1>1 Curve)": "Type de courbe (Courbe IN1>1)",
             "LV (Down stream) Operate time (Trafo Downstream)": "Temps de fonctionnement BT (en aval) (Trafo en aval)",
@@ -382,7 +382,7 @@ class PDFTranslator:
             "Stage - 1 (IN>1) Non - Directional Earth fault: 51N": "Étage - 1 (IN>1) Défaut à la terre non directionnel: 51N",
             "IN>1 Status": "État IN>1",
             "IN>1 Direction": "Direction IN>1",
-            "Stage 1 Earth fault pickup in primary": "Pickup de défaut à la terre étape 1 au primaire",
+            "Stage 1 Earth fault pickup in primary": "Seuil de déclenchement défaut à la terre étage 1 au primaire",
             "Stage 1 Earth fault pickup in secondary": "Pickup de défaut à la terre étape 1 au secondaire",
             "Minimum settings range available in relay": "Plage de réglages minimum disponible dans le relais",
             "Note: The minimum setting range available in the IED is 80mA. So we are recommending 80mA to be adopted.": "Remarque: La plage de réglage minimum disponible dans l'IED est de 80mA. Nous recommandons donc d'adopter 80mA.",
@@ -439,6 +439,10 @@ class PDFTranslator:
             "Iacc (LV)": "Iacc (BT)",
             "The Transformer Differential Protection Relais MiCOM P643- 87T has the following parameters for": "Le relais de protection différentielle de transformateur MiCOM P643-87T a les paramètres suivants pour",
             "Grounded": "Mis à la terre",
+            
+            # Additional buscoupler terms
+            "SETTING CALCULATION DOCUMENT FOR": "DOCUMENT DE CALCUL DE RÉGLAGE POUR",
+            "63kV BUSCOUPLER PROTECTION": "PROTECTION DE COUPLEUR DE BARRES 63kV",
             
             # Units
             "kV": "kV",
