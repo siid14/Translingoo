@@ -101,3 +101,86 @@ python3 src/main.py
 3. Commit your changes
 4. Push to the branch
 5. Create a new Pull Request
+
+# PDF Technical Document Translator
+
+A specialized tool for translating technical PDF documents from English to French with multiple output formats.
+
+## Features
+
+- Web-based interface for easy document uploading
+- Multiple output formats (Word, Excel, PDF)
+- Preserves document formatting where possible
+- Rich technical vocabulary for engineering/electrical terms
+- Automatic translation of tables and text content
+
+## How to Run
+
+### On macOS/Linux:
+
+1. Make sure Python 3.8+ is installed: `python --version`
+2. Make the run script executable: `chmod +x run_pdf_translator.sh`
+3. Run the application: `./run_pdf_translator.sh`
+4. Open your browser and go to `http://localhost:5001`
+
+### On Windows:
+
+1. Make sure Python 3.8+ is installed: `python --version`
+2. Run the application: `run_pdf_translator.bat`
+3. Open your browser and go to `http://localhost:5001`
+
+## Output Formats
+
+### Word Document (.docx)
+
+- **Best for**: Preserving formatting, tables, and structure
+- **Process**: PDF is converted to Word, then translations are applied while maintaining formatting
+- **Advantages**: Most visually similar to the original, editable afterwards
+
+### Excel Spreadsheet (.xlsx)
+
+- **Best for**: Manual review and editing of translations
+- **Process**: Extracts text content with page references and type classification
+- **Advantages**: Easy to edit and review all translations in one place
+
+### PDF Document (.pdf)
+
+- **Best for**: Quick translations where formatting is less critical
+- **Process**: Creates a new PDF with translated content based on extracted text
+- **Advantages**: Same file format as the source, albeit with simplified layout
+
+## Technical Dictionary
+
+The translator includes a specialized dictionary for engineering and electrical domain terms, with a focus on protection relay systems and electrical specifications.
+
+Custom dictionaries can be added by creating a CSV file with columns `english` and `french`.
+
+## Troubleshooting
+
+- **Installation issues**: Check if your Python environment is compatible (3.8+)
+- **Web UI not loading**: Make sure port 5001 is available
+- **PDF conversion errors**: Try the Excel output format as a fallback
+- **Word document formatting issues**: For complex documents, the Excel format may provide better results
+
+## Command Line Usage
+
+You can also use the translator from the command line:
+
+```bash
+# For Word document output (recommended)
+python pdf_translator.py /path/to/document.pdf -w
+
+# For Excel output
+python pdf_translator.py /path/to/document.pdf -e
+
+# For PDF output
+python pdf_translator.py /path/to/document.pdf
+```
+
+## Dependencies
+
+All dependencies are automatically installed by the run scripts. If needed, you can install them manually:
+
+```bash
+pip install -r requirements_pdf.txt
+```

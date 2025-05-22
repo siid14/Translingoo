@@ -76,6 +76,87 @@ Excel to Excel translation tool. Specifically designed for translating technical
 - Translates Excel files with "Description" and "Message" columns
 - Outputs a translated Excel file with additional French translation columns
 - Built-in dictionary of technical terms
+- Now supports technical PDF document translation with Word document output
+
+## Running the Excel Translator
+
+### On macOS/Linux:
+
+1. Download this folder
+2. Open Terminal and navigate to this folder
+3. Make the script executable: `chmod +x run.sh`
+4. Run the translator: `./run.sh /path/to/your/excelfile.xls`
+5. The translated file will be saved next to the original with "\_translated" added to the name
+
+### On Windows:
+
+1. Download this folder
+2. Open Command Prompt and navigate to this folder
+3. Run the translator: `run.bat C:\path\to\your\excelfile.xls`
+4. The translated file will be saved next to the original with "\_translated" added to the name
+
+## Running the PDF Translator
+
+The PDF translator is a web application that offers multiple output formats including Word, Excel, and PDF.
+
+### On macOS/Linux:
+
+1. Navigate to the src directory: `cd src`
+2. Make the run script executable: `chmod +x run_pdf_translator.sh`
+3. Run the PDF translator: `./run_pdf_translator.sh`
+4. Open your browser and go to `http://localhost:5001`
+5. Upload your PDF file and select your preferred output format
+
+### On Windows:
+
+1. Navigate to the src directory: `cd src`
+2. Run the PDF translator: `run_pdf_translator.bat`
+3. Open your browser and go to `http://localhost:5001`
+4. Upload your PDF file and select your preferred output format
+
+## PDF Translation Options
+
+The PDF translator offers multiple output formats:
+
+- **Word Document**: Best option for preserving the original document formatting
+- **Excel**: Extracts text into an Excel spreadsheet for manual review/translation
+- **Auto**: Excel with automatic French translations applied
+- **PDF**: Directly generates a translated PDF document (experimental)
+
+## Requirements for PDF Translator
+
+### System Requirements
+
+- Python 3.8 or higher
+- Sufficient disk space for virtual environments (approximately 200MB)
+- Administrative privileges may be required for installation
+
+### Dependencies
+
+The run scripts automatically install all necessary dependencies, including:
+
+- Flask web framework
+- PyMuPDF (for PDF processing)
+- pdf2docx (for PDF to Word conversion)
+- python-docx (for Word document manipulation)
+- pandas (for data processing)
+- openpyxl and xlsxwriter (for Excel file handling)
+
+If you need to install dependencies manually:
+
+```bash
+pip install -r src/requirements_pdf.txt
+```
+
+### Troubleshooting
+
+If you encounter issues with the PDF translator:
+
+1. **Check Python version**: `python --version` (should be 3.8+)
+2. **Verify file permissions**: Ensure you have read/write permissions for the src directory
+3. **Check port availability**: Make sure port 5001 is not in use by another application
+4. **Look for console errors**: Check the terminal output for specific error messages
+5. **Try a different output format**: If one format fails, try another (Word is generally most reliable)
 
 ## Handling Different Document Types
 
