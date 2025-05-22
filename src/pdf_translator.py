@@ -314,6 +314,7 @@ class PDFTranslator:
             "HV Neutral side amplitude corrected current in PU": "Courant corrigé en amplitude du côté neutre HT en PU",
             "Scaling Factor (K)": "Facteur d'échelle (K)",
             "HV REF Settings :": "Réglages REF HT :",
+            "Scaling Factor (K)": "Facteur d'échelle (K)",
             "REF HV Status": "État REF HT",
             "HV Neutral CT": "TC neutre HT",
             "IREF>Is1 HV in Primary": "IREF>Is1 HT au primaire",
