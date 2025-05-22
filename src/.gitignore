@@ -1,0 +1,21 @@
+# PDF Translator specific files
+venv_pdf/
+static/uploads/
+static/downloads/
+templates/__pycache__/
+
+# Generated output files
+*.pdf
+*.xlsx
+*.docx
+*.csv
+
+# Keep project files
+!requirements_pdf.txt
+!pdf_translator.py
+!pdf_translator_app.py
+!run_pdf_translator.sh
+!run_pdf_translator.bat
+!templates/pdf_index.html
+!templates/pdf_download.html
+!static/css/style.css 
